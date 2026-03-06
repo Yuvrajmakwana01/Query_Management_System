@@ -16,5 +16,7 @@ namespace Repository.Interfaces
 
         public Task<int> Delete(t_Query query);
 
+        public Task<List<t_User>> GetAllUsers();
+        public Task DeleteUser(int id);
     }
 }

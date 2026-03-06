@@ -193,6 +193,61 @@ namespace Repository.Implementations
             return state;
         }
        
+       public async Task<List<t_User>> GetAllUsers()
+        {
+            List<t_User> list = new List<t_User>();
+
+            try
+            {
+                await _conn.OpenAsync();
+
+                var qry = @"SELECT c_userid, c_companyname, c_emailid FROM t_users";
+
+                NpgsqlCommand cmd = new NpgsqlCommand(qry, _conn);
+
+                var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    list.Add(new t_User
+                    {
+                        c_UserId = reader.GetInt32(0),
+                        c_CompanyName = reader.GetString(1),
+                        c_EmailId = reader.GetString(2),
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                await _conn.CloseAsync();
+            }
+
+            return list;
+        }
+
+        public async Task DeleteUser(int id)
+        {
+            try
+            {
+                await _conn.OpenAsync();
+
+                var qry = "DELETE FROM t_users WHERE c_userid = @id";
+
+                using var cmd = new NpgsqlCommand(qry, _conn);
+                cmd.Parameters.AddWithValue("@id", id);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            finally
+            {
+                await _conn.CloseAsync();
+            }
+        }
+        
 
     }
 }
