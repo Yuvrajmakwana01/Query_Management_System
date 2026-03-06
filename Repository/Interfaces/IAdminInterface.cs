@@ -8,6 +8,8 @@ namespace Repository.Interfaces
 {
     public interface IAdminInterface
     {
+
+        Task<t_Dashboard> GetAll();
         public Task<List<t_Query>> GetAllQuery();
 
         public  Task<t_Query> GetOneQuery(int id);

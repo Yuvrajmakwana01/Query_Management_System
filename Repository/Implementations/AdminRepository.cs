@@ -147,5 +147,52 @@ namespace Repository.Implementations
                 return -1;
             }
         }
+      
+         public async Task<t_Dashboard> GetAll()
+        {
+            var state = new t_Dashboard();
+
+            try
+            {
+                await _conn.OpenAsync();
+
+                // total query
+                using var cmd = new NpgsqlCommand(@"SELECT COUNT(*) FROM t_query;", _conn);
+                state.TotalQueries = Convert.ToInt32(await cmd.ExecuteScalarAsync());
+
+                // total today query
+                using var cmd1 = new NpgsqlCommand(@"SELECT COUNT(*) FROM t_query WHERE DATE(c_querydate) = CURRENT_DATE;", _conn);
+                state.TotalTodayQueries = Convert.ToInt32(await cmd1.ExecuteScalarAsync());
+
+                // pending queries
+                using var cmd2 = new NpgsqlCommand(@"SELECT COUNT(*) FROM t_query WHERE c_status IN ('Open','In Progress');", _conn);
+                state.PendingQueries = Convert.ToInt32(await cmd2.ExecuteScalarAsync());
+
+                // pending today queries
+                using var cmd3 = new NpgsqlCommand(@"SELECT COUNT(*) FROM t_query WHERE c_status IN ('Open','In Progress') AND DATE(c_querydate) = CURRENT_DATE;", _conn);
+                state.PendingTodayQueries = Convert.ToInt32(await cmd3.ExecuteScalarAsync());
+
+                // solved queries
+                using var cmd4 = new NpgsqlCommand(@"SELECT COUNT(*) FROM t_query WHERE c_status = 'Solved';", _conn);
+                state.SolvedQuery = Convert.ToInt32(await cmd4.ExecuteScalarAsync());
+
+                // solved today queries
+                using var cmd5 = new NpgsqlCommand(@"SELECT COUNT(*) FROM t_query WHERE c_status = 'Solved' AND DATE(c_querydate) = CURRENT_DATE;", _conn);
+                state.SolvedTodayQueries = Convert.ToInt32(await cmd5.ExecuteScalarAsync());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
+            finally
+            {
+                await _conn.CloseAsync();
+            }
+
+            return state;
+        }
+       
+
     }
 }

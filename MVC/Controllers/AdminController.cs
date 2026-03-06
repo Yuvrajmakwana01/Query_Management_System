@@ -32,6 +32,13 @@ namespace MVC.Controllers
             return View();
         }
 
+    
+    public async Task<IActionResult> GetDashboardData()
+    {
+        var data = await _adminRepo.GetAll();
+        return Ok(data);
+    }
+
 
         public async Task<IActionResult> GetAllQuery()
         {

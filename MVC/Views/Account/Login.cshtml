@@ -84,8 +84,8 @@
                             // Redirect based on role returned from controller
                             if (response.role === "Admin") {
 
-                                window.location.href = '@Url.Action("Query", "Admin")';
-                            } else if (response.role === "employee") {
+                                window.location.href = '@Url.Action("Index", "Admin")';
+                            } else if (response.role === "Employee") {
                                 window.location.href = '@Url.Action("EmpDashboard", "Employee")';
                             } else {
                                 window.location.href = '@Url.Action("QueryDashboard", "Query")';

@@ -1,5 +1,129 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    Layout = "../Shared/_AdminLayout.cshtml";
+}
+
+<div id="dashboard"></div>
+
+<br>
+
+<div id="chart"></div>
+
+@section Scripts{
+
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css"/>
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css"/>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+
+<script>
+
+$(document).ready(function(){
+
+    // Kendo DataSource
+    var dashboardData = new kendo.data.DataSource({
+
+        transport:{
+            read:{
+                url:"/Admin/GetDashboardData",
+                dataType:"json"
+            }
+        },
+
+        schema:{
+            data:function(response){
+                return [response]; // convert object → array
+            }
+        }
+
+    });
+
+
+    // Dashboard Layout
+    $("#dashboard").kendoTileLayout({
+
+        columns:3,
+
+        containers:[
+
+            {
+                colSpan:1,
+                rowSpan:1,
+                bodyTemplate:
+                '<div class="k-card k-card-body">'+
+                '<h4>Total Queries</h4>'+
+                '<h2 id="totalQueries">0</h2>'+
+                '<p>Today: <span id="todayQueries">0</span></p>'+
+                '</div>'
+            },
+
+            {
+                colSpan:1,
+                rowSpan:1,
+                bodyTemplate:
+                '<div class="k-card k-card-body">'+
+                '<h4>Solved Queries</h4>'+
+                '<h2 id="solvedQueries">0</h2>'+
+                '<p>Today: <span id="solvedToday">0</span></p>'+
+                '</div>'
+            },
+
+            {
+                colSpan:1,
+                rowSpan:1,
+                bodyTemplate:
+                '<div class="k-card k-card-body">'+
+                '<h4>Pending Queries</h4>'+
+                '<h2 id="pendingQueries">0</h2>'+
+                '<p>Today: <span id="pendingToday">0</span></p>'+
+                '</div>'
+            }
+
+        ]
+
+    });
+
+
+    // Fetch Data
+    dashboardData.fetch(function(){
+
+        var data = this.data()[0];
+
+        $("#totalQueries").text(data.totalQueries);
+        $("#todayQueries").text(data.totalTodayQueries);
+
+        $("#solvedQueries").text(data.solvedQuery);
+        $("#solvedToday").text(data.solvedTodayQueries);
+
+        $("#pendingQueries").text(data.pendingQueries);
+        $("#pendingToday").text(data.pendingTodayQueries);
+
+
+        // Kendo Chart
+        $("#chart").kendoChart({
+
+            title:{
+                text:"Query Status Overview"
+            },
+
+            legend:{
+                position:"bottom"
+            },
+
+            series:[{
+                type:"pie",
+                data:[
+                    { category:"Solved", value:data.solvedQuery },
+                    { category:"Pending", value:data.pendingQueries }
+                ]
+            }]
+
+        });
+
+    });
+
+});
+
+</script>
+
 }
