@@ -74,6 +74,37 @@ namespace MVC.Controllers
             }
         }
 
+        public IActionResult GetAllUsersPage()
+        {
+            if(HttpContext.Session.GetString("Role")==null)
+            {
+                return RedirectToAction("Index","Home");
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsersData()
+        {
+            if(HttpContext.Session.GetString("Role")==null)
+            {
+                return RedirectToAction("Index","Home");
+            }
+            var users = await _adminRepo.GetAllUsers();
+            return Json(users);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            if(HttpContext.Session.GetString("Role")==null)
+            {
+                return RedirectToAction("Index","Home");
+            }
+            await _adminRepo.DeleteUser(id);
+            return Json(new { success = true });
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
