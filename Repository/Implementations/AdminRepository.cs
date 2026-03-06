@@ -40,10 +40,13 @@ namespace Repository.Implementations
                             c_UserId = reader.GetInt32(1),
                             c_Title = reader.GetString(2),
                             c_Description = reader.GetString(3),
-                            c_QueryDate = DateOnly.FromDateTime(Convert.ToDateTime(reader["c_querydate"])),
-                            c_EmpId = reader.GetInt32(5),
+                            // c_QueryDate = DateOnly.FromDateTime(Convert.ToDateTime(reader["c_querydate"])),
+                            c_QueryDate = (DateOnly)reader["c_querydate"],
+                            // c_EmpId = reader.GetInt32(5),
+                            c_EmpId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5),
                             c_Status = reader.GetString(6),
-                            c_Comment = reader.GetString(7),
+                            // c_Comment = reader.GetString(7),
+                            c_Comment = reader.IsDBNull(7) ? null : reader.GetString(7)
                         });
                     }
                     await _conn.CloseAsync();
@@ -63,7 +66,7 @@ namespace Repository.Implementations
         {
             try
             {
-                var qry = @"SELECT c_queryid, c_userid, c_title. c_description, c_querydate, c_empid, c_status, c_comments FROM t_query WHERE c_queryid=@id";
+                var qry = @"SELECT c_queryid, c_userid, c_title, c_description, c_querydate, c_empid, c_status, c_comment FROM t_query WHERE c_queryid=@id";
 
                 using(var cmd = new NpgsqlCommand(qry, _conn))
                 {
@@ -73,7 +76,6 @@ namespace Repository.Implementations
                     await _conn.OpenAsync();
 
                     var reader = await cmd.ExecuteReaderAsync();
-                    await _conn.CloseAsync();
                     
                     if(await reader.ReadAsync())
                     {
@@ -83,14 +85,19 @@ namespace Repository.Implementations
                             c_UserId = reader.GetInt32(1),
                             c_Title = reader.GetString(2),
                             c_Description = reader.GetString(3),
-                            c_QueryDate = DateOnly.FromDateTime(Convert.ToDateTime(reader["c_querydate"])),
-                            c_EmpId = reader.GetInt32(5),
+                            // c_QueryDate = DateOnly.FromDateTime(Convert.ToDateTime(reader["c_querydate"])),
+                            c_QueryDate = (DateOnly)reader["c_querydate"],
+                            // c_EmpId = reader.GetInt32(5),
+                            c_EmpId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5),
                             c_Status = reader.GetString(6),
-                            c_Comment = reader.GetString(7),
+                            // c_Comment = reader.GetString(7),
+                            c_Comment = reader.IsDBNull(7) ? null : reader.GetString(7)
                         };
 
                         return query;
                     }
+                    await _conn.CloseAsync();
+
                     return null;
                 }
             }

@@ -27,10 +27,16 @@ namespace MVC.Controllers
             return View();
         }
 
+        public IActionResult Query()
+        {
+            return View();
+        }
+
+
         public async Task<IActionResult> GetAllQuery()
         {
             List<t_Query> queries = await _adminRepo.GetAllQuery();
-            return View(queries);
+            return Json(queries);
         }
 
         public async Task<IActionResult> Delete(int id)

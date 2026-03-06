@@ -1,0 +1,282 @@
+﻿@{
+    ViewData["Title"] = "User Queries";
+    Layout = "_QueryLayout";
+}
+
+<div class="k-content">
+
+    <button id="addQueryBtn"></button>
+
+    <br/><br/>
+
+    <div id="grid"></div>
+
+</div>
+
+<div id="queryWindow"></div>
+
+@section Scripts{
+<script>
+
+$(document).ready(function () {
+
+    // Kendo Button
+    $("#addQueryBtn").kendoButton({
+        icon: "plus",
+        themeColor: "primary",
+        click: openAddWindow
+    });
+
+    // Kendo Grid
+    $("#grid").kendoGrid({
+
+        dataSource: {
+            transport: {
+                read: {
+                    url: "/Query/GetUserQueries",
+                    dataType: "json"
+                }
+            },
+            pageSize: 10
+        },
+
+        pageable: true,
+        sortable: true,
+        filterable: true,
+
+        columns: [
+
+            { field: "c_Title", title: "Title" },
+
+            { field: "c_Description", title: "Description" },
+
+            { field: "c_Priority", title: "Priority" },
+
+            { field: "c_QueryDate", title: "Date" },
+
+            {
+                field: "c_Status",
+                title: "Status",
+                template: statusTemplate
+            },
+
+            { field: "c_Comment", title: "Comment" },
+
+            {
+                title: "Action",
+                template: actionTemplate
+            }
+
+        ]
+
+    });
+
+});
+
+
+// STATUS BADGE
+
+function statusTemplate(data) {
+
+    if (data.c_Status === "Open")
+        return "<span class='k-badge k-badge-warning'>Open</span>";
+
+    if (data.c_Status === "In Progress")
+        return "<span class='k-badge k-badge-info'>In Progress</span>";
+
+    if (data.c_Status === "Solved")
+        return "<span class='k-badge k-badge-success'>Solved</span>";
+
+}
+
+
+// ACTION BUTTONS
+
+function actionTemplate(data) {
+
+    if (data.c_Status === "Solved") {
+
+        return "<span style='color:gray'>Completed</span>";
+
+    }
+
+    return `
+        <button class="k-button k-button-md k-primary"
+            onclick="editQuery(${data.c_QueryId})">Edit</button>
+
+        <button class="k-button k-button-md k-danger"
+            onclick="deleteQuery(${data.c_QueryId})">Delete</button>
+    `;
+}
+
+
+// OPEN ADD QUERY WINDOW
+
+function openAddWindow() {
+
+    $("#queryWindow").kendoWindow({
+        title: "Add Query",
+        modal: true,
+        width: "450px"
+    });
+
+    $("#queryWindow").html("<form id='queryForm'></form>");
+
+    $("#queryForm").kendoForm({
+
+        formData: {
+            c_Title: "",
+            c_Description: "", 
+            c_Priority: "Low"
+        },
+
+        items: [
+
+            {
+                field: "c_Title",
+                label: "Title",
+                editor: "TextBox"
+            },
+
+            {
+                field: "c_Description",
+                label: "Description",
+                editor: "TextArea"
+            }, 
+            {
+                field: "c_Priority",
+                label: "Priority",
+                editor: "DropDownList",
+                editorOptions: {
+                    dataSource: ["Low", "Medium", "High"]
+                }
+            }
+
+
+        ],
+
+        buttonsTemplate: `
+            <button class="k-button k-primary" type="submit">
+                Save
+            </button>
+        `,
+
+        submit: function(e) {
+
+            $.post("/Query/CreateQuery", e.model, function(res){
+
+                if(res.success){
+
+                    $("#queryWindow").data("kendoWindow").close();
+
+                    $("#grid").data("kendoGrid").dataSource.read();
+
+                }
+
+            });
+
+        }
+
+    });
+
+    $("#queryWindow").data("kendoWindow").center().open();
+
+}
+
+
+// EDIT QUERY
+
+function editQuery(id){
+
+    $.get("/Query/GetQueryById",{id:id},function(data){
+
+        $("#queryWindow").kendoWindow({
+            title:"Edit Query",
+            modal:true,
+            width:"450px"
+        });
+
+        $("#queryWindow").html("<form id='queryForm'></form>");
+
+        $("#queryForm").kendoForm({
+
+            formData:data,
+
+            items:[
+
+                {
+                    field:"c_Title",
+                    label:"Title",
+                    editor:"TextBox"
+                },
+
+                {
+                    field:"c_Description",
+                    label:"Description",
+                    editor:"TextArea"
+                }, 
+
+                {
+                    field: "c_Priority",
+                    label: "Priority",
+                    editor: "DropDownList",
+                    editorOptions: {
+                        dataSource: ["Low", "Medium", "High"]
+                    }
+                }
+                
+            ],
+
+            buttonsTemplate:`
+                <button class="k-button k-primary" type="submit">
+                    Update
+                </button>
+            `,
+
+            submit:function(e){
+
+                $.post("/Query/UpdateQuery",e.model,function(res){
+
+                    if(res.success){
+
+                        $("#queryWindow").data("kendoWindow").close();
+
+                        $("#grid").data("kendoGrid").dataSource.read();
+
+                    }
+
+                });
+
+            }
+
+        });
+
+        $("#queryWindow").data("kendoWindow").center().open();
+
+    });
+
+}
+
+
+// DELETE QUERY
+
+function deleteQuery(id){
+
+    if(!confirm("Delete this query?"))
+        return;
+
+    $.post("/Query/DeleteQuery",{id:id},function(res){
+
+        if(res.success){
+
+            $("#grid").data("kendoGrid").dataSource.read();
+
+        }
+
+    });
+
+}
+
+</script>
+}
+
