@@ -1,8 +1,73 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "QMS | Query Management System";
+    Layout = "_Layout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<section class="hero-gradient text-white py-5 px-3">
+    <div class="container text-center py-5">
+        <h1 class="display-3 fw-bold mb-4">Streamline Your Support Workflow</h1>
+        <p class="lead mb-5 opacity-75">Empower your team with real-time insights, automated tracking, and
+            high-performance analytics.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light btn-lg px-5 shadow-sm">Get
+                Started</a>
+            <a href="#features" class="btn btn-light btn-lg px-5 shadow-sm">Explore Features</a>
+        </div>
+    </div>
+</section>
+
+<div id="features" class="container my-5 py-5">
+    <h2 class="text-center mb-5 fw-bold">Why choose our platform?</h2>
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card feature-card border-0 h-100 p-4 shadow-lg">
+                <div class="icon-box mb-3 bg-primary-subtle"><i class="k-icon k-i-user"></i></div>
+                <h4>Centralized Workspace</h4>
+                <p class="text-muted">An intuitive interface for users to submit queries and for employees to manage
+                    their resolution pipeline.</p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card feature-card border-0 h-100 p-4 shadow-lg">
+                <div class="icon-box mb-3 bg-success-subtle"><i class="k-icon k-i-search"></i></div>
+                <h4>Deep Analytics</h4>
+                <p class="text-muted">Real-time performance tracking with interactive gauges, donut charts, and trend
+                    analysis.</p>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card feature-card border-0 h-100 p-4 shadow-lg">
+                <div class="icon-box mb-3 bg-warning-subtle"><i class="k-icon k-i-gear"></i></div>
+                <h4>Automated Efficiency</h4>
+                <p class="text-muted">Smart status updates and resolution tracking ensure no query is left behind.</p>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    .hero-gradient {
+        background: radial-gradient(circle at 10% 20%, rgb(0, 107, 255) 0%, rgb(0, 50, 150) 90%);
+        border-radius: 0 0 50px 50px;
+    }
+
+    .feature-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 20px;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1) !important;
+    }
+
+    .icon-box {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px;
+        font-size: 1.5rem;
+    }
+</style>

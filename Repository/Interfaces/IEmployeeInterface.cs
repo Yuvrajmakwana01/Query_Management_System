@@ -18,7 +18,6 @@ namespace Repository.Interfaces
         Task<int> GetResolvedCountByEmployee(int empId);
 
 
-        Task<Dictionary<string, int>> GetQueryStats(); // For global/today stats
-        Task<List<t_Employee>> GetEmployeeResolutionMetrics(); // For employee efficiency/ For employee efficiency
+       Task<Dictionary<string, int>> GetEmployeeDashboardMetrics(int empId);
     }
 }

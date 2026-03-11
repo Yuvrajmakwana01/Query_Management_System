@@ -1,4 +1,4 @@
-﻿@{
+﻿@* @{
     Layout = null; // Clean page without the main navigation
 }
 
@@ -85,6 +85,139 @@
                             if (response.role === "Admin") {
 
                                 window.location.href = '@Url.Action("Index", "Admin")';
+                            } else if (response.role === "Employee") {
+                                window.location.href = '@Url.Action("EmpDashboard", "Employee")';
+                            } else {
+                                window.location.href = '@Url.Action("QueryDashboard", "Query")';
+                            }
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        kendo.ui.progress($(".login-card"), false);
+                        alert("An error occurred during login.");
+                    }
+                });
+            }
+        });
+
+        // Allow 'Enter' key to submit
+        $(document).keypress(function(e) {
+            if(e.which == 13) {
+                $("#btnLogin").click();
+            }
+        });
+    });
+</script>
+
+</body>
+</html> *@
+
+
+
+
+@{
+    Layout = null; // Clean page without the main navigation
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Query Management System</title>
+    <link href="https://kendo.cdn.telerik.com/themes/10.0.1/default/default-main.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <style>
+        body { background-color: #f4f7f6; display: flex; align-items: center; height: 100vh; }
+        .login-card { width: 100%; max-width: 400px; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: white; margin: auto; }
+        .k-textbox { width: 100%; margin-bottom: 15px; }
+        .login-header { text-align: center; margin-bottom: 25px; color: #3f51b5; }
+        .img-box{
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        #btnLogin{
+            background-color: #3f51b5;
+            font-size: 17px;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-card">
+
+    <div class="img-box">
+         <img src="/css/login.png" alt="logo" height="80px" class="py-2">
+    </div>
+    @* <h3 class="login-header fw-bold">Query System Login</h3> *@
+    
+    <form id="loginForm">
+        <div class="mb-3">
+            <input id="email" name="email" required data-email-msg="Email format is invalid" class="py-2" />
+        </div>
+        
+        <div class="mb-3">
+            <input id="password" name="password" type="password"  required class="py-2" />
+        </div>
+
+        <div class="mt-4">
+            <button id="btnLogin" type="button" class="k-button k-button-md k-rounded-md text-light fw-bold w-100">
+                Login
+            </button>
+        </div>
+
+        <div class="text-center mt-3">
+            <p>Don't have an account? <a href="@Url.Action("Register", "User")" class="text-decoration-none">Register here</a></p>
+        </div>
+    </form>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2023.2.829/js/kendo.all.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Initialize Kendo TextBoxes
+        $("#email").kendoTextBox({
+            placeholder: "Enter your email...",
+            label: "Email"
+        });
+
+        $("#password").kendoTextBox({
+            placeholder: "Enter password...",
+            label: "Password"
+        });
+
+        // Setup Kendo Validator
+        var validator = $("#loginForm").kendoValidator().data("kendoValidator");
+
+        // Login Logic
+        $("#btnLogin").click(function () {
+            if (validator.validate()) {
+                var loginData = {
+                    email: $("#email").val(),
+                    password: $("#password").val()
+                };
+
+                // Visual loading state
+                kendo.ui.progress($(".login-card"), true);
+
+                $.ajax({
+                    url: '@Url.Action("Login", "Account")',
+                    type: 'POST',
+                    data: loginData,
+                    success: function (response) {
+                        kendo.ui.progress($(".login-card"), false);
+                        
+                        if (response.success) {
+                            console.log(response);
+                            // Redirect based on role returned from controller
+                            if (response.role === "Admin") {
+
+                                window.location.href = '@Url.Action("GetAllQuery", "Admin")';
                             } else if (response.role === "Employee") {
                                 window.location.href = '@Url.Action("EmpDashboard", "Employee")';
                             } else {

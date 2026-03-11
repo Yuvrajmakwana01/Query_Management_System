@@ -1,7 +1,4 @@
-@model Repository.Models.t_Registration
-
-@* <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" />
-<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.material-v2.min.css" /> *@
+@* @model Repository.Models.t_Registration
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -62,9 +59,7 @@
 
     <div id="logGrid" class="animate__animated animate__fadeInUp animate__delay-1s" style="margin-top: 30px;"></div>
 </div>
-@* 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script> *@
+
 @section Scripts{
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css"/>
     <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css"/>
@@ -109,7 +104,7 @@
         });
 
         // 4. Initialize Grid (Updated with new field)
-        @* $("#logGrid").kendoGrid({
+        /* $("#logGrid").kendoGrid({
             height: 300,
             columns: [
                 { field: "c_CompanyName", title: "Company", width: "150px" },
@@ -118,7 +113,7 @@
                 { field: "c_Role", title: "Role", width: "120px" }
             ],
             noRecords: { template: "Waiting for user registrations..." }
-        }); *@
+        }); */
 
         // 5. I have used sweetalert and form validations here !!!
         $("#registrationForm").on("submit", function(e) {
@@ -153,4 +148,203 @@
         }
     });
 </script>
+} *@
+
+
+
+@model Repository.Models.t_Registration
+
+@* <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" />
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.material-v2.min.css" /> *@
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<style>
+    body {
+        background-color: #f3f5f7;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .registration-wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+    }
+
+    .k-card {
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        background: white;
+        border: none;
+    }
+
+    #submitBtn {
+        color: #f3f5f7;
+        font-weight: 500;
+        background-color: #4554a7;
+    }
+
+    .form-title {
+        color: #3f51b5;
+        font-weight: 600;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .field-container {
+        margin-bottom: 20px;
+    }
+
+    .k-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #444;
+    }
+
+    .k-button-solid-primary {
+        width: 100%;
+        height: 48px;
+        margin-top: 20px;
+        font-weight: bold;
+        font-size: 1.1em;
+    }
+</style>
+
+<div class="registration-wrapper animate__animated animate__zoomIn">
+    <div class="k-card">
+        <h2 class="form-title">Account Registration</h2>
+
+        <form asp-action="Register" method="post" id="registrationForm">
+            <div class="field-container">
+                <label class="k-label" asp-for="c_CompanyName">Company Name</label>
+                <input asp-for="c_CompanyName" id="companyName" style="width: 100%;"
+                    class="py-2 rounded border-1 px-2" />
+            </div>
+
+            <div class="field-container">
+                <label class="k-label" asp-for="c_EmpName">Employee / User Name</label>
+                <input asp-for="c_EmpName" id="empName" style="width: 100%;" class="py-2 rounded border-1 px-2" />
+            </div>
+
+            <div class="field-container">
+                <label class="k-label" asp-for="c_EmailId">Email Address</label>
+                <input asp-for="c_EmailId" id="email" style="width: 100%;" class="py-2 rounded border-1 px-2" />
+            </div>
+
+            <div class="field-container">
+                <label class="k-label" asp-for="c_Password">Secure Password</label>
+                <input asp-for="c_Password" id="password" type="password" style="width: 100%;"
+                    class="py-2 rounded border-1 px-2" />
+            </div>
+
+            <div class="field-container">
+                <label class="k-label">Select Role</label>
+                <select asp-for="c_Role" id="roleDropdown" name="c_Role" style="width: 100%;"
+                    class="py-2 rounded border-1 px-2">
+                    <option value="Default">Default</option>
+                    <option value="User">User</option>
+                    <option value="Employee">Employee</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitBtn" class="btn w-100 py-2">Create Account</button>
+        </form>
+    </div>
+
+    <div id="logGrid" class="animate__animated animate__fadeInUp animate__delay-1s" style="margin-top: 30px;"></div>
+</div>
+@* 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script> *@
+@section Scripts {
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css" />
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js">
+        <script>
+            $(document).ready(function () {
+                // 1. Initialize Kendo TextBoxes
+                $("#companyName").kendoTextBox({
+                    placeholder: "e.g. CasePoint",
+                    prefixOptions: { icon: "home" }
+                });
+
+            $("#empName").kendoTextBox({
+                placeholder: "e.g. Vineet Pal",
+            prefixOptions: {icon: "user" }
+            });
+
+            $("#email").kendoTextBox({
+                placeholder: "example@domain.com",
+            prefixOptions: {icon: "email" }
+            });
+
+            $("#password").kendoTextBox({
+                placeholder: "Minimum 8 characters",
+            prefixOptions: {icon: "lock" }
+            });
+
+            // 2. Initialize Role Dropdown
+            $("#roleDropdown").kendoDropDownList({
+                animation: {
+                open: {effects: "slideIn:down", duration: 300 },
+            close: {effects: "fadeOut", duration: 300 }
+                }
+            });
+
+            // 3. Initialize Submit Button
+            $("#submitBtn").kendoButton({
+                themeColor: "primary",
+            icon: "check"
+            });
+
+            // 4. Initialize Grid (Updated with new field)
+            @* $("#logGrid").kendoGrid({
+            height: 300,
+            columns: [
+                { field: "c_CompanyName", title: "Company", width: "150px" },
+                { field: "c_EmpName", title: "Employee Name" },
+                { field: "c_EmailId", title: "Email" },
+                { field: "c_Role", title: "Role", width: "120px" }
+            ],
+            noRecords: { template: "Waiting for user registrations..." }
+        }); *@
+
+            // 5. I have used sweetalert and form validations here !!!
+            $("#registrationForm").on("submit", function(e) {
+                var empName = $("#empName").val();
+            var email = $("#email").val();
+
+            if (!empName || !email) {
+                e.preventDefault();
+            Swal.fire({
+                icon: 'warning',
+            title: 'Missing Information',
+            text: 'Please fill in all mandatory fields!',
+            confirmButtonColor: '#3f51b5'
+                    });
+                }
+            });
+
+            // 6. This part describes the success notification here from the backend
+            @if (TempData["msg"] != null)
+            {
+                <text>
+                    Swal.fire({
+                        icon: 'success',
+                    title: 'Success!',
+                    text: '@TempData["msg"]',
+                    timer: 3000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                    });
+                </text>
+            }
+        });
+    </script>
 }
+

@@ -81,54 +81,31 @@ namespace Repository.Implementations
         }
 
 
-        public async Task<Dictionary<string, int>> GetQueryStats()
+        public async Task<Dictionary<string, int>> GetEmployeeDashboardMetrics(int empId)
         {
             var stats = new Dictionary<string, int>();
-            if (_conn.State != System.Data.ConnectionState.Open)
-                await _conn.OpenAsync();
-            // Example: Fetching Total and Today's counts
+            if (_conn.State != ConnectionState.Open) await _conn.OpenAsync();
+
+            // Fetches: Personal Solved, System-wide Unsolved, and High Priority Unsolved
             var sql = @"SELECT 
-                COUNT(*) FILTER (WHERE c_status != 'Solved') as pending_all,
-                COUNT(*) FILTER (WHERE c_status = 'Solved') as solved_all,
-                COUNT(*) FILTER (WHERE c_querydate = CURRENT_DATE) as total_today
+                COUNT(*) FILTER (WHERE c_empid = @empId AND c_status = 'Solved') as solved,
+                COUNT(*) FILTER (WHERE c_status != 'Solved') as system_active,
+                COUNT(*) FILTER (WHERE c_status != 'Solved' AND c_priority = 'High') as urgent
                 FROM t_query";
 
-            await using var cmd = new NpgsqlCommand(sql, _conn);
-            await using var reader = await cmd.ExecuteReaderAsync();
+            using var cmd = new NpgsqlCommand(sql, _conn);
+            cmd.Parameters.AddWithValue("empId", empId);
+            using var reader = await cmd.ExecuteReaderAsync();
+
             if (await reader.ReadAsync())
             {
-                stats["pending_all"] = reader.GetInt32(0);
-                stats["solved_all"] = reader.GetInt32(1);
-                stats["total_today"] = reader.GetInt32(2);
+                stats["solved"] = Convert.ToInt32(reader["solved"]);
+                stats["active"] = Convert.ToInt32(reader["system_active"]);
+                stats["urgent"] = Convert.ToInt32(reader["urgent"]);
             }
             return stats;
         }
 
-
-        public async Task<List<t_Employee>> GetEmployeeResolutionMetrics()
-        {
-            var list = new List<t_Employee>();
-            if (_conn.State != System.Data.ConnectionState.Open)
-                await _conn.OpenAsync();
-            // Aggregating resolved queries per employee
-            var sql = @"SELECT e.c_empname, COUNT(q.c_queryid) as solved_count 
-                FROM t_employee e 
-                LEFT JOIN t_query q ON e.c_empid = q.c_empid 
-                WHERE q.c_status = 'Solved' 
-                GROUP BY e.c_empname";
-
-            await using var cmd = new NpgsqlCommand(sql, _conn);
-            await using var reader = await cmd.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                list.Add(new t_Employee
-                {
-                    c_EmpName = reader.GetString(0),
-                    SolvedCount = reader.GetInt32(1)
-                });
-            }
-            return list;
-        }
-
+        
     }
 }

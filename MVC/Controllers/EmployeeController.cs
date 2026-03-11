@@ -41,7 +41,16 @@ namespace MVC.Controllers
             var allUnsolved = await _repo.GetUnsolvedQueries();
             int activeCount = allUnsolved.Count;
 
-            return Json(new { solvedCount = solvedCount, activeCount = activeCount });
+            // ADD THIS LINE: Filter the list you already fetched for High priority
+            // Note: Use the exact property name from your Model (e.g., c_Priority or Priority)
+            int urgentCount = allUnsolved.Count(q => q.c_Priority == "High");
+
+            return Json(new
+            {
+                solvedCount = solvedCount,
+                activeCount = activeCount,
+                urgentCount = urgentCount 
+            });
         }
 
         [HttpPost]
@@ -54,17 +63,21 @@ namespace MVC.Controllers
             return Json(new { success });
         }
 
-        public async Task<IActionResult> GetDashboardMetrics()
+
+        [HttpGet]
+        public async Task<JsonResult> GetPersonalAnalytics()
         {
-            var stats = await _repo.GetQueryStats();
-            var efficiency = await _repo.GetEmployeeResolutionMetrics();
+            int empId = HttpContext.Session.GetInt32("UserId") ?? 0;
+            var metrics = await _repo.GetEmployeeDashboardMetrics(empId);
 
             return Json(new
             {
-                queryStats = stats,
-                efficiencyData = efficiency
+                solvedCount = metrics["solved"],
+                activeCount = metrics["active"],
+                urgentCount = metrics["urgent"]
             });
         }
+
 
         public IActionResult Logout()
         {
