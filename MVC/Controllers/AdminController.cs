@@ -11,6 +11,7 @@ using Repository.Models;
 namespace MVC.Controllers
 {
     // [Route("[controller]")]
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class AdminController : Controller
     {
         // private readonly ILogger<AdminController> _logger;
@@ -76,20 +77,20 @@ namespace MVC.Controllers
 
         public IActionResult GetAllUsersPage()
         {
-            if(HttpContext.Session.GetString("Role")==null)
-            {
-                return RedirectToAction("Index","Home");
-            }
+            // if(HttpContext.Session.GetString("Role")==null)
+            // {
+            //     return RedirectToAction("Index","Home");
+            // }
             return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllUsersData()
         {
-            if(HttpContext.Session.GetString("Role")==null)
-            {
-                return RedirectToAction("Index","Home");
-            }
+            // if(HttpContext.Session.GetString("Role")==null)
+            // {
+            //     return RedirectToAction("Index","Home");
+            // }
             var users = await _adminRepo.GetAllUsers();
             return Json(users);
         }
@@ -97,12 +98,20 @@ namespace MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteUser(int id)
         {
-            if(HttpContext.Session.GetString("Role")==null)
-            {
-                return RedirectToAction("Index","Home");
-            }
+            // if(HttpContext.Session.GetString("Role")==null)
+            // {
+            //     return RedirectToAction("Index","Home");
+            // }
             await _adminRepo.DeleteUser(id);
             return Json(new { success = true });
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            Response.Cookies.Delete(".AspNetCore.Session");
+            return RedirectToAction("Login", "Home");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

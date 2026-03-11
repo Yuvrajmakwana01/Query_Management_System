@@ -154,6 +154,7 @@ namespace Repository.Implementations
 
             try
             {
+                await _conn.CloseAsync();
                 await _conn.OpenAsync();
 
                 // total query
@@ -199,9 +200,10 @@ namespace Repository.Implementations
 
             try
             {
+                await _conn.CloseAsync();
                 await _conn.OpenAsync();
 
-                var qry = @"SELECT c_userid, c_companyname, c_emailid FROM t_users";
+                var qry = @"SELECT c_userid, c_companyname, c_emailid FROM t_user";
 
                 NpgsqlCommand cmd = new NpgsqlCommand(qry, _conn);
 
@@ -233,9 +235,10 @@ namespace Repository.Implementations
         {
             try
             {
+                await _conn.CloseAsync();
                 await _conn.OpenAsync();
 
-                var qry = "DELETE FROM t_users WHERE c_userid = @id";
+                var qry = "DELETE FROM t_user WHERE c_userid = @id";
 
                 using var cmd = new NpgsqlCommand(qry, _conn);
                 cmd.Parameters.AddWithValue("@id", id);
