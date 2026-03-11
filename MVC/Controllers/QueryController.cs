@@ -18,6 +18,12 @@ public class QueryController : Controller
         return View();
     }
 
+    
+    public IActionResult Dashboard()
+    {
+        return View();
+    }
+
     // Get user queries
     public async Task<IActionResult> GetUserQueries()
     {

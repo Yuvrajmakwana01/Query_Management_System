@@ -64,19 +64,19 @@ namespace MVC.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<JsonResult> GetPersonalAnalytics()
-        {
-            int empId = HttpContext.Session.GetInt32("UserId") ?? 0;
-            var metrics = await _repo.GetEmployeeDashboardMetrics(empId);
+        // [HttpGet]
+        // public async Task<JsonResult> GetPersonalAnalytics()
+        // {
+        //     int empId = HttpContext.Session.GetInt32("UserId") ?? 0;
+        //     var metrics = await _repo.GetEmployeeDashboardMetrics(empId);
 
-            return Json(new
-            {
-                solvedCount = metrics["solved"],
-                activeCount = metrics["active"],
-                urgentCount = metrics["urgent"]
-            });
-        }
+        //     return Json(new
+        //     {
+        //         solvedCount = metrics["solved"],
+        //         activeCount = metrics["active"],
+        //         urgentCount = metrics["urgent"]
+        //     });
+        // }
 
 
         public IActionResult Logout()

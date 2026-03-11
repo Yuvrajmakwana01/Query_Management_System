@@ -18,6 +18,6 @@ namespace Repository.Interfaces
         Task<int> GetResolvedCountByEmployee(int empId);
 
 
-       Task<Dictionary<string, int>> GetEmployeeDashboardMetrics(int empId);
+        Task<Dictionary<string, int>> GetEmployeeDashboardMetrics(int empId);
     }
 }

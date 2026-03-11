@@ -1,0 +1,115 @@
+﻿@{
+    ViewData["Title"] = "User Profile";
+    Layout = "_QueryLayout";
+
+    var userName = Context.Session.GetString("UserName");
+    var role = Context.Session.GetString("UserRole");
+
+    var initial = !string.IsNullOrEmpty(userName) ? userName.Substring(0,1).ToUpper() : "U";
+}
+
+<style>
+
+.profile-wrapper{
+    max-width:700px;
+    margin:auto;
+}
+
+.profile-card{
+    border:none;
+    border-radius:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.profile-header{
+    background:linear-gradient(135deg,#4e73df,#6f42c1);
+    color:white;
+    padding:30px;
+    border-top-left-radius:12px;
+    border-top-right-radius:12px;
+    text-align:center;
+}
+
+.profile-avatar{
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    background:white;
+    color:#4e73df;
+    font-size:32px;
+    font-weight:bold;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:auto;
+}
+
+.profile-body{
+    padding:30px;
+}
+
+.info-row{
+    padding:10px 0;
+    border-bottom:1px solid #eee;
+}
+
+.info-row:last-child{
+    border-bottom:none;
+}
+
+</style>
+
+<div class="container py-5">
+
+    <div class="profile-wrapper">
+
+        <div class="card profile-card">
+
+            <!-- Header -->
+            <div class="profile-header">
+
+                <div class="profile-avatar">
+                    @initial
+                </div>
+
+                <h4 class="mt-3 mb-1">@userName</h4>
+
+                <span class="badge bg-light text-dark">
+                    @role
+                </span>
+
+            </div>
+
+            <!-- Body -->
+            <div class="profile-body">
+
+                <div class="info-row">
+                    <strong>Company Name</strong>
+                    <div class="text-muted">@userName</div>
+                </div>
+
+                <div class="info-row">
+                    <strong>User Role</strong>
+                    <div class="text-muted">@role</div>
+                </div>
+
+                <div class="info-row">
+                    <strong>Account Status</strong>
+                    <div>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                </div>
+
+              
+                <div class="info-row">
+                    <strong>Support Access</strong>
+                    <div class="text-muted">Query Management System</div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
