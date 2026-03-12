@@ -89,7 +89,7 @@ namespace Repository.Implementations
                             // c_QueryDate = DateOnly.FromDateTime(Convert.ToDateTime(reader["c_querydate"])),
                             c_QueryDate = (DateOnly)reader["c_querydate"],
                             // c_EmpId = reader.GetInt32(5),
-                            c_EmpId = reader.GetInt32(5),
+                           c_EmpId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5),
                             c_Status = reader.GetString(6),
                             // c_Comment = reader.GetString(7),
                             c_Comment = reader.IsDBNull(7) ? null : reader.GetString(7)

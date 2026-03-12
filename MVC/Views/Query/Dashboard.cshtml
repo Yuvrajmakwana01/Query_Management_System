@@ -1,66 +1,61 @@
-<<<<<<< HEAD
 ﻿@{
-=======
-@{
->>>>>>> c9eb8d9284431959f33bdf9a98d9edc411b1ab96
+
     ViewData["Title"] = "User Profile";
     Layout = "_QueryLayout";
 
     var userName = Context.Session.GetString("UserName");
     var role = Context.Session.GetString("UserRole");
 
-    var initial = !string.IsNullOrEmpty(userName) ? userName.Substring(0,1).ToUpper() : "U";
+    var initial = !string.IsNullOrEmpty(userName) ? userName.Substring(0, 1).ToUpper() : "U";
 }
 
 <style>
+    .profile-wrapper {
+        max-width: 700px;
+        margin: auto;
+    }
 
-.profile-wrapper{
-    max-width:700px;
-    margin:auto;
-}
+    .profile-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
 
-.profile-card{
-    border:none;
-    border-radius:12px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.08);
-}
+    .profile-header {
+        background: linear-gradient(135deg, #4e73df, #6f42c1);
+        color: white;
+        padding: 30px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        text-align: center;
+    }
 
-.profile-header{
-    background:linear-gradient(135deg,#4e73df,#6f42c1);
-    color:white;
-    padding:30px;
-    border-top-left-radius:12px;
-    border-top-right-radius:12px;
-    text-align:center;
-}
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: white;
+        color: #4e73df;
+        font-size: 32px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+    }
 
-.profile-avatar{
-    width:80px;
-    height:80px;
-    border-radius:50%;
-    background:white;
-    color:#4e73df;
-    font-size:32px;
-    font-weight:bold;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:auto;
-}
+    .profile-body {
+        padding: 30px;
+    }
 
-.profile-body{
-    padding:30px;
-}
+    .info-row {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
 
-.info-row{
-    padding:10px 0;
-    border-bottom:1px solid #eee;
-}
-
-.info-row:last-child{
-    border-bottom:none;
-}
-
+    .info-row:last-child {
+        border-bottom: none;
+    }
 </style>
 
 <div class="container py-5">
@@ -104,7 +99,7 @@
                     </div>
                 </div>
 
-              
+
                 <div class="info-row">
                     <strong>Support Access</strong>
                     <div class="text-muted">Query Management System</div>
@@ -114,10 +109,6 @@
 
         </div>
 
-<<<<<<< HEAD
     </div>
 
 </div>
-=======
-    </div>
->>>>>>> c9eb8d9284431959f33bdf9a98d9edc411b1ab96

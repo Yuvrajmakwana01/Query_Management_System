@@ -3,10 +3,27 @@
     Layout = "_QueryLayout";
 }
 
+
+<style>
+
+    .page-header {
+        background: white;
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+        border: 1px solid #f1f5f9;
+    }
+</style>
+
+
 <div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="fw-bold text-primary">Manage Your Queries</h3>
-        <button id="addQueryBtn"></button>
+      <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">Support Dashboard</h3>
+            <p class="text-muted small mb-0">Track, manage, and resolve your technical inquiries.</p>
+        </div>
+        <button id="addQueryBtn" class="rounded-2">ADD NEW QUERY</button>
     </div>
 
     <div id="grid" class="k-shadow"></div>
@@ -48,7 +65,7 @@
         // REUSABLE WINDOW LOGIC
         function openQueryWindow(mode, data = null) {
             let win = $("#queryWindow").kendoWindow({
-                title: mode + " Query",
+                title: mode + " Your Query",
                 modal: true,
                 width: "450px",
                 visible: false
@@ -79,9 +96,20 @@
 
         // Templates remain the same but cleaner
         function statusTemplate(data) {
-            const colors = { "Open": "warning", "In Progress": "info", "Solved": "success" };
-            return `<span class="k-badge k-badge-solid-${colors[data.c_Status] || 'secondary'} k-badge-md">${data.c_Status}</span>`;
-        }
+    const status = (data.c_Status || "Open").trim();
+    
+    // Map to Bootstrap colors: success (green), warning (yellow), info (blue)
+    const colors = { 
+        "Open": "warning", 
+        "In Progress": "info", 
+        "Solved": "success" 
+    };
+    
+    const badgeClass = colors[status] || "secondary";
+
+    // Using Bootstrap "badge" and "rounded-pill" classes
+    return `<span class="badge rounded-pill bg-${badgeClass} px-3">${status}</span>`;
+}
 
         function actionTemplate(data) {
             if (data.c_Status === "Solved") return "<span class='text-muted small'>Completed</span>";

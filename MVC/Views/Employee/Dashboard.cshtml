@@ -188,16 +188,7 @@
                         read: { url: "@Url.Action("GetUnsolvedQueries", "Employee")", dataType: "json" },
                         update: { url: "@Url.Action("UpdateQueryStatus", "Employee")", type: "POST", dataType: "json" }
                     },
-<<<<<<< HEAD
-                    requestEnd: function(e) {
-            if (e.type === "update") {
-                var grid = $("#unsolvedGrid").data("kendoGrid");
-                grid.dataSource.read();
-                grid.refresh();
-                loadDashboardData(); // refresh dashboard counters
-            }
-        },
-=======
+
                     requestEnd: function (e) {
                         // Check if the action was an 'update'
                         if (e.type === "update") {
@@ -208,7 +199,6 @@
                             loadDashboardData();
                         }
                     },
->>>>>>> c9eb8d9284431959f33bdf9a98d9edc411b1ab96
                     schema: {
                         model: {
                             id: "c_QueryId",
@@ -290,7 +280,7 @@
 
                 // Initialize Weekly Trend (Sample Data)
                 $("#productivityChart").kendoChart({
-                    series: [{ name: "Resolved", data: [4, 7, 5, 8, data.solvedCount % 10, data.solvedCount % 10, data.solvedCount % 10], color: "#764ba2" }],
+                    series: [{ name: "Resolved", data: [4, 7, 5, 8, 6, data.solvedCount % 10, data.solvedCount % 10], color: "#764ba2" }],
                     categoryAxis: { categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] },
                     tooltip: { visible: true, format: "{0} resolved" }
                 });

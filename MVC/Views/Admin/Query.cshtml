@@ -2,30 +2,56 @@
     Layout = "../Shared/_AdminLayout.cshtml";
 }
 
-<!-- Kendo CSS -->
-@* <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" />
-<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css" />
+<style>
+    /* Status Badge Styling */
+    .status-pill {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+        text-align: center;
+        min-width: 80px;
+    }
+    .status-pending { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    .status-resolved { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .status-closed { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
 
-<!-- jQuery FIRST -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    /* Layout enhancements */
+    .grid-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        padding: 20px;
+        margin-top: 20px;
+    }
+    .k-grid-header { font-weight: bold; }
+    .description-cell {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+</style>
 
-<!-- Kendo JS AFTER jQuery -->
-<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script> *@
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h2 class="text-primary"><i class="k-icon k-i-question fs-1 "></i> Query Management</h2>
+            <p class="text-muted">Track and resolve user queries efficiently.</p>
+        </div>
+      
+    </div>
 
-<h2>Query Lists</h2>
-
-<h3></h3>
-
-<div id="grid"></div>
+    <div class="grid-card">
+        <div id="grid"></div>
+    </div>
+</div>
 
 @section Scripts{
-
 <script>
-
 $(document).ready(function () {
-
     $("#grid").kendoGrid({
-
         dataSource: {
             transport: {
                 read: {
@@ -33,71 +59,90 @@ $(document).ready(function () {
                     dataType: "json"
                 }
             },
-            pageSize: 10
+            pageSize: 10,
+            schema: {
+                model: {
+                    id: "c_QueryId",
+                    fields: {
+                        c_QueryDate: { type: "date" }
+                    }
+                }
+            }
         },
-
-        height: 500,
-        pageable: true,
+        height: 550,
+        pageable: { refresh: true, pageSizes: true },
         sortable: true,
         filterable: true,
-
+        toolbar: ["search"], // Added search for quick lookup
         columns: [
-
-            { field: "c_QueryId", title: "Query ID", width: "90px" },
-            { field: "c_UserId", title: "User ID", width: "90px" },
-            { field: "c_Title", title: "Title", width: "150px" },
-            { field: "c_Description", title: "Description", width: "200px" },
-            { field: "c_QueryDate", title: "Date", width: "120px" },
-            { field: "c_EmpId", title: "Emp.Id", width: "100px" },
-            { field: "c_EmpName", title: "Name", width: "100px" },
-            { field: "c_Status", title: "Status", width: "100px" },
-            { field: "c_Comment", title: "Comments", width: "150px" },
-
+            { field: "c_QueryId", title: "ID", width: "70px", attributes: { style: "text-align: center;" } },
+            { field: "c_Title", title: "Title", width: "150px", template: "<strong>#: c_Title #</strong>" },
+            { 
+                field: "c_Description", 
+                title: "Description", 
+                width: "200px",
+                attributes: { class: "description-cell", title: "#: c_Description #" } 
+            },
+            { 
+                field: "c_QueryDate", 
+                title: "Submitted On", 
+                width: "130px",
+                format: "{0:MM/dd/yyyy}" // Clean date format
+            },
+            { 
+                field: "c_Status", 
+                title: "Status", 
+                width: "110px",
+                template: function(dataItem) {
+                    var status = dataItem.c_Status ? dataItem.c_Status.toLowerCase() : 'pending';
+                    var cssClass = "status-pending";
+                    if(status === 'resolved') cssClass = "status-resolved";
+                    if(status === 'closed') cssClass = "status-closed";
+                    return "<span class='status-pill " + cssClass + "'>" + dataItem.c_Status + "</span>";
+                }
+            },
+            { field: "c_EmpName", title: "Assigned To", width: "120px" },
             {
                 title: "Actions",
-                width: "120px",
-                template: "<button class='k-button k-button-icontext k-grid-delete' onclick='deleteQuery(#=c_QueryId#)'>Delete</button>"
+                width: "110px",
+                attributes: { style: "text-align: center;" },
+                template: `<button class='k-button k-button-md k-rounded-md k-button-solid-error' 
+                                   onclick='deleteQuery(#=c_QueryId#)'>
+                                <span class='k-icon k-i-trash rounded-3'></span>
+                           </button>`
             }
-
         ]
-
     });
-
 });
 
+function reloadGrid() {
+    $("#grid").data("kendoGrid").dataSource.read();
+}
 
 function deleteQuery(id) {
-
-    if (confirm("Are you sure you want to delete this query?")) {
+    if (confirm("⚠️ Are you sure you want to remove this query record?")) {
+        // Show a loading overlay on the grid
+        kendo.ui.progress($("#grid"), true);
 
         $.ajax({
-
             url: "/Admin/Delete",
             type: "POST",
             data: { id: id },
-
             success: function (response) {
-
+                kendo.ui.progress($("#grid"), false);
                 if (response.success) {
-
-                    alert(response.message);
-
-                    $("#grid").data("kendoGrid").dataSource.read();
-
+                    alert("✅ " + response.message);
+                    reloadGrid();
                 } else {
-
-                    alert(response.message);
-
+                    alert("❌ " + response.message);
                 }
-
+            },
+            error: function() {
+                kendo.ui.progress($("#grid"), false);
+                alert("Critical server error occurred.");
             }
-
         });
-
     }
-
 }
-
 </script>
-
 }
