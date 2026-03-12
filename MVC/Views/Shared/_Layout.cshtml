@@ -47,11 +47,14 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - MVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="container py-3 border-top mt-5">
+    <div class="row">
+        <div class="col-12 col-md text-center text-md-start">
+            <h4 class="fw-bold text-primary mb-2">SolvePoint</h4>
+            <small class="d-block mb-3 text-muted">&copy; 2026 SolvePoint QMS. All rights reserved.</small>
         </div>
-    </footer>
+    </div>
+</footer>
     
     @await RenderSectionAsync("Scripts", required: false)
 </body>

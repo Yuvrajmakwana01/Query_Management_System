@@ -1,73 +1,157 @@
 ﻿@{
-    ViewData["Title"] = "QMS | Query Management System";
+    ViewData["Title"] = "SolvePoint | Intelligent Query Management";
     Layout = "_Layout";
 }
 
-<section class="hero-gradient text-white py-5 px-3">
-    <div class="container text-center py-5">
-        <h1 class="display-4 fw-bold mb-4">Streamline Your Support Workflow with <i>SolvePoint</span></h1>
-        <p class="lead mb-5 opacity-75">Empower your team with real-time insights, automated tracking, and
-            high-performance analytics.</p>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="@Url.Action("Login", "Account")" class="btn btn-outline-light btn-lg px-5 shadow-sm">Get
-                Started</a>
-            <a href="#features" class="btn btn-light btn-lg px-5 shadow-sm">Explore Features</a>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --brand-indigo: #4f46e5;
+        --brand-dark: #1e3160;
+    }
+
+    body { 
+        font-family: 'Plus Jakarta Sans', sans-serif; 
+        background-color: #f8fafc; 
+        color: #1e293b;
+    }
+
+    /* Premium Mesh Gradient Hero */
+    .hero-mesh {
+        background-color: var(--brand-dark);
+        background-image: 
+            radial-gradient(at 0% 0%, rgba(55, 45, 239, 0.2) 0, transparent 50%), 
+            radial-gradient(at 100% 0%, rgba(98, 99, 183, 0.15) 0, transparent 50%);
+        padding: 120px 0 180px 0;
+        clip-path: ellipse(150% 100% at 50% 0%);
+        border-radius: 20px;
+    }
+
+    .text-gradient {
+        background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Floating Card Enhancements */
+    .feature-overlap {
+        margin-top: -100px;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 30px 60px -12px rgba(15, 23, 42, 0.15) !important;
+        background: #ffffff;
+    }
+
+    .icon-shape {
+        width: 54px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 14px;
+        font-size: 1.5rem;
+    }
+
+    .btn-hero {
+        padding: 0.8rem 2.5rem;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: all 0.3s;
+    }
+
+    .ls-tight { letter-spacing: -0.03em; }
+</style>
+
+<section class="hero-mesh text-white text-center position-relative">
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 mb-4">
+                    🚀 SolvePoint
+                </span>
+                <h1 class="display-3 fw-bolder ls-tight mb-4 text-gradient">
+                    Streamline Your Support with <br/>
+                    <span class="text-primary">Intelligent Workflow</span>
+                </h1>
+                <p class="lead text-white-50 mb-5 mx-auto px-lg-5" style="max-width: 800px;">
+                    The intelligent query management system designed to transform customer support into a competitive advantage.
+                </p>
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-primary btn-hero shadow-lg">Get Started Free</a>
+                    <a href="#features" class="btn btn-outline-light btn-hero opacity-75">View Features</a>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<div id="features" class="container my-5 py-5">
-    <h2 class="text-center mb-5 fw-bold">Why choose our platform?</h2>
+<section id="features" class="container feature-overlap mb-5">
     <div class="row g-4">
-        <div class="col-lg-4">
-            <div class="card feature-card border-0 h-100 p-4 shadow-lg">
-                <div class="icon-box mb-3 bg-primary-subtle"><i class="k-icon k-i-user"></i></div>
-                <h4>Centralized Workspace</h4>
-                <p class="text-muted">An intuitive interface for users to submit queries and for employees to manage
-                    their resolution pipeline.</p>
+        <div class="col-md-4">
+            <div class="card glass-card h-100 border-0 shadow-lg rounded-4 p-4">
+                <div class="card-body">
+                    <div class="icon-shape bg-primary bg-opacity-10 text-primary mb-4">
+                        <i class="k-icon k-i-grid-layout"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">Unified Workspace</h4>
+                    <p class="text-muted lh-base">
+                        An intuitive interface for users to submit queries and for employees to manage 
+                        resolutions in one place.
+                    </p>
+                </div>
             </div>
         </div>
-        <div class="col-lg-4">
-            <div class="card feature-card border-0 h-100 p-4 shadow-lg">
-                <div class="icon-box mb-3 bg-success-subtle"><i class="k-icon k-i-search"></i></div>
-                <h4>Deep Analytics</h4>
-                <p class="text-muted">Real-time performance tracking with interactive gauges, donut charts, and trend
-                    analysis.</p>
+        <div class="col-md-4">
+            <div class="card glass-card h-100 border-0 shadow-lg rounded-4 p-4">
+                <div class="card-body">
+                    <div class="icon-shape bg-success bg-opacity-10 text-success mb-4">
+                        <i class="k-icon k-i-search"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">Deep Analytics</h4>
+                    <p class="text-muted lh-base">
+                        Real-time performance tracking with interactive gauges, donut charts, and trend 
+                        analysis for better decision making.
+                    </p>
+                </div>
             </div>
         </div>
-        <div class="col-lg-4">
-            <div class="card feature-card border-0 h-100 p-4 shadow-lg">
-                <div class="icon-box mb-3 bg-warning-subtle"><i class="k-icon k-i-gear"></i></div>
-                <h4>Automated Efficiency</h4>
-                <p class="text-muted">Smart status updates and resolution tracking ensure no query is left behind.</p>
+        <div class="col-md-4">
+            <div class="card glass-card h-100 border-0 shadow-lg rounded-4 p-4">
+                <div class="card-body">
+                    <div class="icon-shape bg-warning bg-opacity-10 text-warning mb-4">
+                        <i class="k-icon k-i-flash"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-3">Automated Efficiency</h4>
+                    <p class="text-muted lh-base">
+                        Smart status updates and resolution tracking ensure no query is left behind, 
+                        reducing response times by up to 40%.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 
-<style>
-    .hero-gradient {
-        background: radial-gradient(circle at 10% 20%, rgb(0, 107, 255) 0%, rgb(0, 50, 150) 90%);
-        border-radius: 0 0 50px 50px;
-    }
 
-    .feature-card {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border-radius: 20px;
-    }
 
-    .feature-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 30px rgba(0, 0, 0, 0.1) !important;
-    }
+<section class="container my-5">
+    <div class=" rounded-5 p-5 text-center text-white shadow-lg overflow-hidden position-relative" style="background-color: #283e72;">
+        <div class="position-relative" style="z-index: 2;">
+            <h2 class="display-5 fw-bold mb-3">Ready to transform your support?</h2>
+            <p class="lead mb-4 opacity-75">Master Your Workflow with <span class="text-light">SolvePoint</span></p>
+            <a href="@Url.Action("Login", "Account")" class="btn btn-light btn-lg px-5 py-3 fw-bold text-primary rounded-3">Sign Up Now</a>
+        </div>
+        <div class="position-absolute bg-white opacity-10 rounded-circle" style="width: 300px; height: 300px; top: -100px; right: -100px;"></div>
+    </div>
+</section>
 
-    .icon-box {
-        width: 60px;
-        height: 60px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 15px;
-        font-size: 1.5rem;
-    }
-</style>

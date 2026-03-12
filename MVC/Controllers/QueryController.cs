@@ -17,21 +17,23 @@ public class QueryController : Controller
     // Page load
     public IActionResult QueryDashboard()
     {
-        if(HttpContext.Session.GetString("UserRole")==null)
-            {
-                return RedirectToAction("Index","Home");
-            }
-            return View();
+        if (HttpContext.Session.GetString("UserRole") == null)
+        {
+            return RedirectToAction("Index", "Home");
+        }
+        return View();
     }
 
     public IActionResult Dashboard()
     {
-        if(HttpContext.Session.GetString("UserRole")==null)
+        if (HttpContext.Session.GetString("UserRole") == null)
         {
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
         return View();
     }
+
+
 
     // Get user queries
     public async Task<IActionResult> GetUserQueries()
