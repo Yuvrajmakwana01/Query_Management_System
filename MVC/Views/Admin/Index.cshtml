@@ -1,0 +1,195 @@
+﻿@{
+    Layout = "../Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+        --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        --danger-gradient: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+        --card-bg: #ffffff;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    body { background-color: #f8fafc; font-family: 'Inter', system-ui, sans-serif; }
+
+    .dashboard-wrapper { padding: 2rem; max-width: 1600px; margin: 0 auto; }
+
+    /* Header Section */
+    .header-content { margin-bottom: 2rem; }
+    .header-content h2 { font-weight: 800; color: var(--text-main); letter-spacing: -0.025em; }
+
+    /* KPI Grid Layout */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .premium-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .premium-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+
+    .icon-box {
+        width: 56px;
+        height: 56px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1.25rem;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .bg-total { background: var(--primary-gradient); }
+    .bg-solved { background: var(--success-gradient); }
+    .bg-pending { background: var(--danger-gradient); }
+
+    .stat-info .label { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; }
+    .stat-info .value { font-size: 1.875rem; font-weight: 700; color: var(--text-main); display: block; line-height: 1; margin: 0.5rem 0; }
+    .stat-info .trend { font-size: 0.75rem; padding: 2px 8px; border-radius: 99px; background: #f1f5f9; color: var(--text-muted); }
+
+    /* Chart Section */
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="dashboard-wrapper">
+    <div class="header-content">
+        <h2>Analytics Overview</h2>
+        <p class="text-muted">Review your query resolution metrics and performance trends.</p>
+    </div>
+
+    <div class="kpi-grid">
+        <div class="premium-card">
+            <div class="icon-box bg-total"><i class="k-icon k-i-file-add"></i></div>
+            <div class="stat-info">
+                <span class="label">Total Inquiries</span>
+                <span class="value" id="totalQueries">0</span>
+                <span class="trend">Today: <strong id="todayQueries">0</strong></span>
+            </div>
+        </div>
+
+        <div class="premium-card">
+            <div class="icon-box bg-solved"><i class="k-icon k-i-check-outline"></i></div>
+            <div class="stat-info">
+                <span class="label">Resolved Cases</span>
+                <span class="value" id="solvedQueries">0</span>
+                <span class="trend">Today: <strong id="solvedToday">0</strong></span>
+            </div>
+        </div>
+
+        <div class="premium-card">
+            <div class="icon-box bg-pending"><i class="k-icon k-i-clock"></i></div>
+            <div class="stat-info">
+                <span class="label">Awaiting Action</span>
+                <span class="value" id="pendingQueries">0</span>
+                <span class="trend">Today: <strong id="pendingToday">0</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-grid">
+        <div id="chart"></div>
+    </div>
+</div>
+
+@section Scripts{
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css"/>
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.edge-main.min.css"/>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+
+
+
+<script>
+$(document).ready(function(){
+
+    var dashboardData = new kendo.data.DataSource({
+        transport: {
+            read: { url: "/Admin/GetDashboardData", dataType: "json" }
+        },
+        schema: {
+            data: function(response) { return [response]; }
+        }
+    });
+
+    dashboardData.fetch(function(){
+        var data = this.data()[0];
+
+        // Smooth Count Animation
+        animateCount("totalQueries", data.totalQueries);
+        animateCount("solvedQueries", data.solvedQuery);
+        animateCount("pendingQueries", data.pendingQueries);
+
+        $("#todayQueries").text(data.totalTodayQueries);
+        $("#solvedToday").text(data.solvedTodayQueries);
+        $("#pendingToday").text(data.pendingTodayQueries);
+
+        // Premium Chart Configuration
+        $("#chart").kendoChart({
+            title: { 
+                text: "RESOLUTION EFFICIENCY", 
+                font: "bold 14px Inter", 
+                color: "#64748b",
+                align: "left"
+            },
+            legend: { position: "right", labels: { font: "10px Inter" } },
+            seriesDefaults: {
+                type: "donut",
+                holeSize: 70,
+                overlay: { gradient: "none" }
+            },
+            series: [{
+                data: [
+                    { category: "Resolved", value: data.solvedQuery, color: "#10b981" },
+                    { category: "Pending", value: data.pendingQueries, color: "#f43f5e" }
+                ],
+                padding: 10
+            }],
+            tooltip: { 
+                visible: true, 
+                template: "#= category #: #= value # (#= kendo.format('{0:P1}', percentage) #)",
+                background: "#1e293b",
+                color: "#fff",
+                border: { width: 0 }
+            }
+        });
+    });
+
+    function animateCount(id, value) {
+        $({ countNum: 0 }).animate({ countNum: value }, {
+            duration: 1500,
+            easing: 'swing',
+            step: function() {
+                $("#" + id).text(Math.floor(this.countNum));
+            },
+            complete: function() {
+                $("#" + id).text(this.countNum);
+            }
+        });
+    }
+});
+</script>
+}

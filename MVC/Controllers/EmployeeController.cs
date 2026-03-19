@@ -9,6 +9,7 @@ using Repository.Interfaces;
 
 namespace MVC.Controllers
 {
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public class EmployeeController : Controller
     {
 
@@ -16,10 +17,23 @@ namespace MVC.Controllers
         public EmployeeController(IEmployeeInterface repo) { _repo = repo; }
 
 
-        public IActionResult EmpDashboard() => View();
+        public IActionResult EmpDashboard()
+        {
+            if(HttpContext.Session.GetString("UserRole")==null)
+            {
+                return RedirectToAction("Index","Home");
+            }
+            return View();
+        }
 
-
-        public IActionResult Dashboard() => View();
+        public IActionResult Dashboard()
+        {
+            if(HttpContext.Session.GetString("UserRole")==null)
+            {
+                return RedirectToAction("Index","Home");
+            }
+            return View();
+        }
 
         [HttpGet]
         public async Task<JsonResult> GetUnsolvedQueries()
@@ -41,7 +55,16 @@ namespace MVC.Controllers
             var allUnsolved = await _repo.GetUnsolvedQueries();
             int activeCount = allUnsolved.Count;
 
-            return Json(new { solvedCount = solvedCount, activeCount = activeCount });
+            // ADD THIS LINE: Filter the list you already fetched for High priority
+            // Note: Use the exact property name from your Model (e.g., c_Priority or Priority)
+            int urgentCount = allUnsolved.Count(q => q.c_Priority == "High");
+
+            return Json(new
+            {
+                solvedCount = solvedCount,
+                activeCount = activeCount,
+                urgentCount = urgentCount 
+            });
         }
 
         [HttpPost]
@@ -54,22 +77,27 @@ namespace MVC.Controllers
             return Json(new { success });
         }
 
-        public async Task<IActionResult> GetDashboardMetrics()
-        {
-            var stats = await _repo.GetQueryStats();
-            var efficiency = await _repo.GetEmployeeResolutionMetrics();
 
-            return Json(new
-            {
-                queryStats = stats,
-                efficiencyData = efficiency
-            });
-        }
+        // [HttpGet]
+        // public async Task<JsonResult> GetPersonalAnalytics()
+        // {
+        //     int empId = HttpContext.Session.GetInt32("UserId") ?? 0;
+        //     var metrics = await _repo.GetEmployeeDashboardMetrics(empId);
 
+        //     return Json(new
+        //     {
+        //         solvedCount = metrics["solved"],
+        //         activeCount = metrics["active"],
+        //         urgentCount = metrics["urgent"]
+        //     });
+        // }
+
+        [HttpGet]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
-            return RedirectToAction("Index", "Home");
+            Response.Cookies.Delete(".AspNetCore.Session");
+            return RedirectToAction("Login", "Account");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

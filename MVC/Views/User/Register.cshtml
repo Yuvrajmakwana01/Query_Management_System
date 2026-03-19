@@ -1,0 +1,143 @@
+@model Repository.Models.t_Registration
+
+<style>
+    body {
+        background-color: #f3f5f7;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .registration-wrapper {
+        max-width: 600px;
+        margin: 40px auto;
+    }
+
+    .k-card {
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        background: white;
+        border: none;
+    }
+
+    .form-title {
+        color: #3f51b5;
+        font-weight: 600;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .field-container {
+        margin-bottom: 20px;
+    }
+
+    .k-label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #444;
+    }
+
+    #submitBtn {
+        width: 100%;
+        height: 45px;
+        background-color: #4554a7;
+        color: white;
+        font-weight: 600;
+    }
+
+    .text-danger {
+        font-size: 13px;
+    }
+</style>
+
+<div class="registration-wrapper">
+    <div class="k-card">
+
+        <h2 class="form-title">Account Registration</h2>
+
+        <form asp-action="Register" method="post" id="registrationForm">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="field-container">
+                <label class="k-label" asp-for="c_CompanyName">Company Name</label>
+                <input asp-for="c_CompanyName" id="companyName" style="width:100%" />
+                <span asp-validation-for="c_CompanyName" class="text-danger"></span>
+            </div>
+
+            <div class="field-container">
+                <label class="k-label" asp-for="c_EmpName">Name</label>
+                <input asp-for="c_EmpName" id="empName" style="width:100%" />
+                <span asp-validation-for="c_EmpName" class="text-danger"></span>
+            </div>
+
+            <div class="field-container">
+                <label class="k-label" asp-for="c_EmailId">Email</label>
+                <input asp-for="c_EmailId" id="email" style="width:100%" />
+                <span asp-validation-for="c_EmailId" class="text-danger"></span>
+            </div>
+
+            <div class="field-container">
+                <label class="k-label" asp-for="c_Password">Password</label>
+                <input asp-for="c_Password" id="password" type="password" style="width:100%" />
+                <span asp-validation-for="c_Password" class="text-danger"></span>
+            </div>
+
+            <div class="field-container">
+                <label class="k-label" asp-for="c_Role">Role</label>
+                <select asp-for="c_Role" id="roleDropdown" style="width:95%">
+                    <option value="">Select Role</option>
+                    <option value="User">User</option>
+                    <option value="Employee">Employee</option>
+                </select>
+                <span asp-validation-for="c_Role" class="text-danger"></span>
+            </div>
+
+            <button type="submit" id="submitBtn">Create Account</button>
+
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css"/>
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css"/>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+
+<partial name="_ValidationScriptsPartial" />
+
+<script>
+
+$(document).ready(function(){
+
+    $("#companyName").kendoTextBox({
+        placeholder:"Enter company name"
+    });
+
+    $("#empName").kendoTextBox({
+        placeholder:"Enter employee name"
+    });
+
+    $("#email").kendoTextBox({
+        placeholder:"Enter email address"
+    });
+
+    $("#password").kendoTextBox({
+        placeholder:"Enter password"
+    });
+
+    $("#roleDropdown").kendoDropDownList();
+
+    $("#submitBtn").kendoButton({
+        themeColor:"primary"
+    });
+
+});
+
+</script>
+
+}

@@ -16,6 +16,8 @@ namespace Repository.Models
 
         public int? c_EmpId { get; set; }
 
+        public string c_EmpName{ get; set;}
+
         [Required(ErrorMessage = "Please provide a title for the query")]
         [StringLength(200, ErrorMessage = "Title cannot exceed 200 characters")]
         public string c_Title { get; set; } = string.Empty;

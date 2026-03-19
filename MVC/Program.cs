@@ -10,7 +10,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAdminInterface, AdminRepository>();
 builder.Services.AddScoped<IAccountInterface,AccountRepository>();
 builder.Services.AddScoped<IEmployeeInterface,EmployeeRepository>();
-
+builder.Services.AddScoped<IUserInterface, UserRepository>();
+builder.Services.AddScoped<IQueryInterface, QueryRepository>();
 
 builder.Services.AddScoped<NpgsqlConnection>(conn =>
 {

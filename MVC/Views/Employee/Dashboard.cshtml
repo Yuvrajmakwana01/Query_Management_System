@@ -1,67 +1,174 @@
 ﻿@{
-    ViewData["Title"] = "Employee Dashboard";
+    ViewData["Title"] = "Employee Command Center";
     Layout = "_EmployeeLayout";
 }
 
-<link rel="stylesheet" href="https://kendo.cdn.telerik.com/themes/13.0.0/default/default-main.css" />
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
 
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2><i class="k-icon k-i-Paste-plain-text"></i> Employee Workspace</h2>
-        <div id="performance-badge" class="p-2 border rounded bg-light">
-            <strong>My Solved Queries: </strong> <span id="solvedCount" class="badge bg-success">0</span>
+    .k-card {
+        border-radius: 12px;
+        border: none;
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card {
+        border-left: 5px solid #764ba2;
+        transition: transform 0.2s;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
+
+    /* Header Styling */
+    .dashboard-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+    }
+
+    /* Chart Heights */
+    #resolutionGauge {
+        height: 200px;
+        margin: 0 auto;
+    }
+
+    #statusDonut {
+        height: 300px;
+    }
+
+    #productivityChart {
+        height: 400px;
+    }
+
+    /* Custom Grid Styling */
+    .k-grid {
+        border-radius: 10px;
+        border: none;
+    }
+
+    .k-grid-header {
+        background-color: #f8f9fa;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    .badge-priority {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 11px;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    <div class="dashboard-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="display-6 fw-bold mb-0">Employee Workspace</h1>
+            <p class="opacity-75">Welcome back! <strong
+                    class="text-uppercase">@Context.Session.GetString("UserName")</strong></p>
+        </div>
+        <div class="text-end">
+            <div class="h2 mb-0" id="headerSolvedCount">0</div>
+            <small class="text-uppercase">Total Solved</small>
         </div>
     </div>
 
-    <div id="employeeTabs">
+    <div id="mainTabStrip">
         <ul>
-            <li class="k-state-active">Active Queries</li>
-            <li>My Performance</li>
+            <li class="k-state-active"><i class="k-icon k-i-grid"></i>&nbsp; Active Workspace</li>
+            <li><i class="k-icon k-i-chart-line"></i>&nbsp; Performance Insights</li>
         </ul>
 
-        <div>
-            <div id="unsolvedGrid"></div>
+        <div class="p-4">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="k-card stat-card p-3">
+                        <small class="text-muted text-uppercase fw-bold">System Queue</small>
+                        <h2 id="systemActive" class="text-warning mb-0">0</h2>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="k-card stat-card p-3" style="border-left-color: #dc3545;">
+                        <small class="text-muted text-uppercase fw-bold">Urgent Attention</small>
+                        <h2 id="urgentCount" class="text-danger mb-0">0</h2>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="k-card stat-card p-3" style="border-left-color: #28a745;">
+                        <small class="text-muted text-uppercase fw-bold">Resolution Rate</small>
+                        <h2 id="resRatePercent" class="text-success mb-0">0%</h2>
+                    </div>
+                </div>
+            </div>
+
+            <div class="k-card p-3">
+                <h5 class="mb-4 fw-bold">Pending User Queries</h5>
+                <div id="unsolvedGrid"></div>
+            </div>
         </div>
 
-        <div>
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <div class="card shadow-sm">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Personal Metrics</h5>
-                            <hr />
-                            <div id="performanceChart" style="height: 250px;"></div>
-
-                        </div>
+        <div class="p-4 bg-light">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="k-card p-4 text-center h-100">
+                        <h6 class="fw-bold mb-3">Resolution Accuracy</h6>
+                        <div id="resolutionGauge"></div>
+                        <p class="text-muted small mt-2">Target: 90% completion</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="k-card p-4 h-100">
+                        <h6 class="fw-bold mb-3 text-center">Workload Share</h6>
+                        <div id="statusDonut"></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="k-card p-4 text-center h-100 d-flex flex-column justify-content-center">
+                        <h1 class="display-1 text-primary fw-bold" id="leaderboardCount">0</h1>
+                        <p class="text-muted">Solved This Month</p>
+                        <hr />
+                        <h3 class="text-success">Rank #2</h3>
+                        <p class="small">Top Performer Leaderboard</p>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="k-card p-4">
+                        <h6 class="fw-bold mb-3">Weekly Productivity Trend</h6>
+                        <div id="productivityChart"></div>
                     </div>
                 </div>
             </div>
         </div>
-     
     </div>
 </div>
 
-
-<script id="updateTemplate" type="text/x-kendo-template">
+<script id="resolveTemplate" type="text/x-kendo-template">
     <div class="p-3">
-        <div class="mb-3">
-            <label class="fw-bold">Title:</label>
-            <span>#: c_Title #</span>
+        <div class="alert alert-info py-2">
+            <strong>Issue:</strong> #: c_Title #
         </div>
         <div class="mb-3">
-            <label class="fw-bold">Description:</label>
-            <p class="text-muted">#: c_Description #</p>
+            <label class="form-label fw-bold">User Description:</label>
+            <div class="p-2 border rounded bg-light small" style="max-height: 100px; overflow-y: auto;">
+                #: data.c_Description || "No description provided." #
+            </div>
         </div>
-        <hr/>
-        <div class="k-edit-label"><label for="c_Status">Change Status</label></div>
+        <div class="k-edit-label"><label for="c_Status">Update Status</label></div>
         <div class="k-edit-field">
             <input name="c_Status" id="statusDDL" required />
         </div>
-
-        <div class="k-edit-label mt-2"><label for="c_Comment">Resolution Comment</label></div>
+        <div class="k-edit-label mt-2"><label for="c_Comment">Resolution Notes</label></div>
         <div class="k-edit-field">
-            <textarea name="c_Comment" class="k-textarea" style="width:100%; height:80px;" 
-                      placeholder="Enter details on how the issue was fixed..."></textarea>
+            <textarea name="c_Comment" class="k-textarea" style="width:100%; height:100px;" 
+                      placeholder="Explain how you resolved this issue..."></textarea>
         </div>
     </div>
 </script>
@@ -69,31 +176,36 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-            // Initialize Tabs
-            $("#employeeTabs").kendoTabStrip();
+            // Initialize Core UI
+            $("#mainTabStrip").kendoTabStrip({ animation: { open: { effects: "fadeIn" } } });
 
-            // Load Initial Performance Stats
-            loadPerformanceStats();
+            loadDashboardData();
 
-
-            $("#unsolvedGrid").on("click", ".k-grid-cancel-changes", function () {
-                dataSource.cancelChanges();
-            });
-
-            // 1. Unsolved Queries Grid
+            // 1. Grid Initialization
             $("#unsolvedGrid").kendoGrid({
                 dataSource: {
                     transport: {
                         read: { url: "@Url.Action("GetUnsolvedQueries", "Employee")", dataType: "json" },
                         update: { url: "@Url.Action("UpdateQueryStatus", "Employee")", type: "POST", dataType: "json" }
                     },
+
+                    requestEnd: function (e) {
+                        // Check if the action was an 'update'
+                        if (e.type === "update") {
+                            // If the backend returned successfully
+                            var grid = $("#unsolvedGrid").data("kendoGrid");
+                            grid.dataSource.read();
+                            grid.refresh();
+                            loadDashboardData();
+                        }
+                    },
                     schema: {
                         model: {
                             id: "c_QueryId",
                             fields: {
                                 c_QueryId: { type: "number" },
-                                c_Title: { type: "string" },
-                                c_Priority: { type: "string" },
+                                c_Title: { editable: false },
+                                c_Priority: { editable: false },
                                 c_Status: { type: "string" },
                                 c_Comment: { type: "string" }
                             }
@@ -103,53 +215,84 @@
                 },
                 sortable: true,
                 filterable: true,
+                pageable: true,
                 columns: [
-                    { field: "c_Title", title: "Query Title", width: "25%" },
+                    { field: "c_Title", title: "Issue Title", width: "35%" },
                     { field: "c_Priority", title: "Priority", width: "15%", template: p => renderPriority(p.c_Priority) },
-                    { field: "c_Status", title: "Current Status", width: "15%" },
-                    { field: "c_QueryDate", title: "Date Submitted", format: "{0:MM/dd/yyyy}", width: "15%" },
-                    { command: [{ name: "edit", text: "Resolve" }], title: "Actions", width: "15%" }
+                    { field: "c_Status", title: "Status", width: "15%" },
+                    { field: "c_QueryDate", title: "Date", format: "{0:MM/dd/yyyy}", width: "15%" },
+                    { command: [{ name: "edit", text: "Resolve" }], title: "Action", width: "150px" }
                 ],
                 editable: {
                     mode: "popup",
-                    template: kendo.template($("#updateTemplate").html())
+                    template: kendo.template($("#resolveTemplate").html())
                 },
                 edit: function (e) {
-                    // Initialize DropDown in Popup
+                    e.container.data("kendoWindow").title("Resolve User Query");
                     e.container.find("#statusDDL").kendoDropDownList({
                         dataSource: ["In Progress", "Solved"]
                     });
-                    e.container.data("kendoWindow").title("Update Query Resolution");
                 },
-                save: function (e) {
-                    // Refresh performance stats after a successful solve
-                    setTimeout(loadPerformanceStats, 1000);
+                save: function () {
+                    setTimeout(loadDashboardData, 800);
                 }
             });
         });
 
-        function renderPriority(priority) {
-            let color = priority === "High" ? "danger" : (priority === "Medium" ? "warning" : "info");
-            return `<span class="badge bg-${color}">${priority}</span>`;
-        }
-
-        function loadPerformanceStats() {
+        // 2. Data Loading & Chart Logic
+        function loadDashboardData() {
             $.get("@Url.Action("GetPersonalMetrics", "Employee")", function (data) {
-                $("#solvedCount").text(data.solvedCount);
+                // Update Numeric Displays
+                console.log("Data from server:", data);
+                $("#headerSolvedCount, #leaderboardCount").text(data.solvedCount);
+                $("#systemActive").text(data.activeCount);
+                $("#urgentCount").text(data.urgentCount);
 
-                // Initialize Kendo Chart for Performance Tracking
-                $("#performanceChart").kendoChart({
+                let rate = data.activeCount > 0 ? Math.round((data.solvedCount / (data.solvedCount + data.activeCount)) * 100) : 100;
+                $("#resRatePercent").text(rate + "%");
+
+                // Initialize Gauge
+                $("#resolutionGauge").kendoRadialGauge({
+                    pointer: { value: rate },
+                    scale: {
+                        max: 100,
+                        ranges: [
+                            { from: 0, to: 40, color: "#dc3545" },
+                            { from: 40, to: 80, color: "#ffc107" },
+                            { from: 80, to: 100, color: "#28a745" }
+                        ]
+                    }
+                });
+
+                // Initialize Donut
+                $("#statusDonut").kendoChart({
+                    legend: { position: "bottom" },
                     series: [{
-                        type: "pie",
+                        type: "donut",
                         data: [
                             { category: "Solved", value: data.solvedCount, color: "#28a745" },
-                            { category: "Active Issues", value: data.activeCount, color: "#ffc107" }
+                            { category: "Pending", value: data.activeCount, color: "#ffc107" },
+                            { category: "Urgent", value: data.urgentCount, color: "#dc3545" }
                         ]
                     }],
                     tooltip: { visible: true, template: "${category}: ${value}" }
                 });
+
+                // Initialize Weekly Trend (Sample Data)
+                $("#productivityChart").kendoChart({
+                    series: [{ name: "Resolved", data: [4, 7, 5, 8, 6, data.solvedCount % 10, data.solvedCount % 10], color: "#764ba2" }],
+                    categoryAxis: { categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] },
+                    tooltip: { visible: true, format: "{0} resolved" }
+                });
             });
         }
 
+        function renderPriority(p) {
+            let color = p === "High" ? "danger" : (p === "Medium" ? "warning" : "info");
+            return `<span class="badge-priority bg-${color}20 text-${color} border border-${color}">${p}</span>`;
+        }
     </script>
-}
+} 
+
+
+

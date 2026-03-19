@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "User Queries";
+    Layout = "_QueryLayout";
+}
+
+
+<style>
+
+    .page-header {
+        background: white;
+        padding: 1.5rem 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        margin-bottom: 2rem;
+        border: 1px solid #f1f5f9;
+    }
+</style>
+
+
+<div class="container-fluid py-4">
+      <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="fw-bold text-dark mb-1">Support Dashboard</h3>
+            <p class="text-muted small mb-0">Track, manage, and resolve your technical inquiries.</p>
+        </div>
+        <button id="addQueryBtn" class="rounded-2">ADD NEW QUERY</button>
+    </div>
+
+    <div id="grid" class="k-shadow"></div>
+</div>
+
+<div id="queryWindow"></div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Button Style
+            $("#addQueryBtn").kendoButton({
+                icon: "plus",
+                themeColor: "primary",
+                click: () => openQueryWindow("Add")
+            });
+
+            // Grid Style
+            $("#grid").kendoGrid({
+                dataSource: {
+                    transport: { read: { url: "/Query/GetUserQueries", dataType: "json" } },
+                    pageSize: 10
+                },
+                pageable: { pageSizes: true },
+                sortable: true,
+                filterable: true,
+                resizable: true,
+                columns: [
+                    { field: "c_Title", title: "Title", width: "150px" },
+                    { field: "c_Description", title: "Description" },
+                    { field: "c_Priority", title: "Priority", width: "100px" },
+                    { field: "c_QueryDate", title: "Date", width: "120px" },
+                    { field: "c_Status", title: "Status", template: statusTemplate, width: "120px" },
+                    { title: "Action", template: actionTemplate, width: "160px" }
+                ]
+            });
+        });
+
+        // REUSABLE WINDOW LOGIC
+        function openQueryWindow(mode, data = null) {
+            let win = $("#queryWindow").kendoWindow({
+                title: mode + " Your Query",
+                modal: true,
+                width: "450px",
+                visible: false
+            }).data("kendoWindow");
+
+            win.content("<form id='queryForm'></form>");
+            
+            $("#queryForm").kendoForm({
+                formData: data || { c_Title: "", c_Description: "", c_Priority: "Low" },
+                items: [
+                    { field: "c_Title", label: "Title", editor: "TextBox" },
+                    { field: "c_Description", label: "Description", editor: "TextArea" },
+                    { field: "c_Priority", label: "Priority", editor: "DropDownList", editorOptions: { dataSource: ["Low", "Medium", "High"] } }
+                ],
+                buttonsTemplate: `<button class="k-button k-button-md k-button-solid-primary" type="submit">Save</button>`,
+                submit: function(e) {
+                    let url = mode === "Edit" ? "/Query/UpdateQuery" : "/Query/CreateQuery";
+                    $.post(url, e.model, function(res) {
+                        if(res.success) {
+                            win.close();
+                            $("#grid").data("kendoGrid").dataSource.read();
+                        }
+                    });
+                }
+            });
+            win.center().open();
+        }
+
+        // Templates remain the same but cleaner
+        function statusTemplate(data) {
+    const status = (data.c_Status || "Open").trim();
+    
+    // Map to Bootstrap colors: success (green), warning (yellow), info (blue)
+    const colors = { 
+        "Open": "warning", 
+        "In Progress": "info", 
+        "Solved": "success" 
+    };
+    
+    const badgeClass = colors[status] || "secondary";
+
+    // Using Bootstrap "badge" and "rounded-pill" classes
+    return `<span class="badge rounded-pill bg-${badgeClass} px-3">${status}</span>`;
+}
+
+        function actionTemplate(data) {
+            if (data.c_Status === "Solved") return "<span class='text-muted small'>Completed</span>";
+            return `
+                <button class="k-button k-button-sm k-button-solid-primary" onclick="editQuery(${data.c_QueryId})">Edit</button>
+                <button class="k-button k-button-sm k-button-solid-base" onclick="deleteQuery(${data.c_QueryId})">Delete</button>
+            `;
+        }
+
+        function editQuery(id) {
+            $.get("/Query/GetQueryById", { id: id }, function(data) {
+                openQueryWindow("Edit", data);
+            });
+        }
+
+        function deleteQuery(id) {
+            if(confirm("Delete this query?")) {
+                $.post("/Query/DeleteQuery", { id: id }, () => $("#grid").data("kendoGrid").dataSource.read());
+            }
+        }
+    </script>
+}

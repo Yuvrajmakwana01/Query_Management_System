@@ -14,6 +14,10 @@ namespace Repository.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int c_UserId { get; set; }
 
+        [Required(ErrorMessage = "User name is required")]
+        [StringLength(40)]
+        public string c_UserName { get; set; }
+
         [Required(ErrorMessage = "Company name is required")]
         [StringLength(40)]
         public string? c_CompanyName { get; set; }
