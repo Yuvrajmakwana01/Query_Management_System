@@ -1,0 +1,382 @@
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - SolvePoint Elite</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://kendo.cdn.telerik.com/themes/10.0.1/default/default-main.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --sp-primary: #2563eb;
+            --sp-dark: #0f172a;
+            --sp-border: #e2e8f0;
+        }
+
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+            background-color: #d4d5e5;
+        }
+
+        .split-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* --- LEFT SIDE: 3D ROBOT & BRANDING --- */
+        .brand-side {
+            flex: 1.2;
+            position: relative;
+            background-color: #ebebeb;
+            display: none;
+            overflow: hidden;
+        }
+
+        .spline-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .spline-wrapper iframe {
+            width: 100%;
+            height: 108%;
+            border: none;
+            position: absolute;
+            top: 0;
+        }
+
+        .brand-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            padding: 40px;
+            margin-top: -15px;
+            display: flex;
+            flex-direction: column;
+            pointer-events: none;
+        }
+
+        .brand-logo {
+            font-weight: 800;
+            font-size: 28px;
+            letter-spacing: -1.5px;
+            color: var(--sp-dark);
+            pointer-events: auto;
+            align-self: flex-start;
+        }
+
+        .brand-logo span {
+            color: var(--sp-primary);
+        }
+
+        /* --- RIGHT SIDE: LOGIN FORM --- */
+        .form-side {
+            flex: 1;
+            background-color: #d4d5e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            z-index: 10;
+        }
+
+        /* Form Border and Shadow added here */
+        .login-card {
+            width: 100%;
+            max-width: 440px;
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid var(--sp-border);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+        }
+
+        .field-container {
+            margin-bottom: 24px;
+        }
+
+        .k-floating-label-container {
+            width: 100% !important;
+        }
+
+        .k-textbox,
+        .k-input,
+        .k-input-inner {
+            border-radius: 12px !important;
+            border: 1px solid var(--sp-border) !important;
+            height: 54px !important;
+            background-color: #ffffff !important;
+            box-shadow: none !important;
+        }
+
+        .k-state-focused,
+        .k-focus,
+        .k-textbox:focus-within,
+        .k-input:focus-within {
+            border-color: var(--sp-border) !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        #btnLogin {
+            width: 100%;
+            height: 54px;
+            background: var(--sp-primary) !important;
+            border: none !important;
+            border-radius: 12px !important;
+            color: white !important;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            margin-top: 10px;
+        }
+
+        #btnLogin:hover {
+            background: #1d4ed8 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+
+        .footer-text {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        @@media (min-width: 992px) {
+            .brand-side {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="split-container">
+        <div class="brand-side">
+            <div class="spline-wrapper">
+                @* <iframe src='https://my.spline.design/happyrobotbutton-CRmYeByPNH76sWh9goPnL6iW/' 
+                    frameborder='0' width='100%' height='100%'></iframe> *@
+
+                <iframe src='https://my.spline.design/happyrobotbutton-XQyMVsw47buYzjvC4GV8yzNz/' frameborder='0'
+                    width='100%' height='100%'></iframe>
+            </div>
+
+            @* <div class="brand-overlay">
+                <div class="brand-logo"><i class="bi bi-intersect text-primary me-2"></i> Solve<span>Point</span>.</div>
+            </div> *@
+            <div class="brand-overlay">
+                <a class="navbar-brand" asp-controller="Account" asp-action="Login">
+                    <img src="~/images/SolvePoint.png" width="160"  style="mix-blend-mode: multiply; border-radius: 12px;"/>
+                </a>
+                
+                @* <div class="brand-logo"><i class="bi bi-intersect text-primary me-2"></i> Solve<span>Point</span>.</div> *@
+            </div>
+        </div>
+
+        <div class="form-side">
+            <div class="login-card">
+                <div class="mb-4 text-center">
+                    <h2 class="fw-bold text-dark">Sign In</h2>
+                    <p class="text-muted">Welcome back! Please enter your details.</p>
+                </div>
+
+                <form id="loginForm">
+                    <div class="field-container">
+                        <input id="email" name="email" required data-email-msg="Email format is invalid" />
+                    </div>
+
+                    <div class="field-container">
+                        <input id="password" name="password" type="password" required />
+                    </div>
+
+                    <div class="mt-2">
+                        <button id="btnLogin" type="button" class="k-button">Login</button>
+                    </div>
+
+                    <div class="mt-4 text-center">
+                        <a href="@Url.Action("ForgotPassword", "Account")" class="text-center">
+                            Forgot Password?
+                        </a>
+                    </div>
+
+                    <div class="footer-text">
+                        Don't have an account? <a href="@Url.Action("Register", "User")"
+                            class="text-primary fw-bold text-decoration-none">Register here</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2023.2.829/js/kendo.all.min.js"></script>
+
+    @* <script>
+        $(document).ready(function () {
+            $("#email").kendoTextBox({
+                placeholder: "Enter your email...",
+                label: "Email"
+            });
+
+            $("#password").kendoTextBox({
+                placeholder: "Enter password...",
+                label: "Password"
+            });
+
+            var validator = $("#loginForm").kendoValidator().data("kendoValidator");
+
+            $("#btnLogin").click(function () {
+                if (validator.validate()) {
+                    var loginData = {
+                        email: $("#email").val(),
+                        password: $("#password").val()
+                    };
+
+                    kendo.ui.progress($(".form-side"), true);
+
+                    $.ajax({
+                        url: '@Url.Action("Login", "Account")',
+                        type: 'POST',
+                        data: loginData,
+                        success: function (response) {
+                            kendo.ui.progress($(".form-side"), false);
+
+                            if (response.success) {
+                                if (response.role === "Admin") {
+                                    window.location.href = '@Url.Action("Index", "Admin")';
+                                } else if (response.role === "Employee") {
+                                    window.location.href = '@Url.Action("Dashboard", "Employee")';
+                                } else {
+                                    window.location.href = '@Url.Action("Dashboard", "Query")';
+                                }
+                            } else {
+                                alert(response.message);
+                            }
+                        },
+                        error: function () {
+                            kendo.ui.progress($(".form-side"), false);
+                            alert("An error occurred during login.");
+                        }
+                    });
+                }
+            });
+
+            $(document).keypress(function (e) {
+                if (e.which == 13) {
+                    $("#btnLogin").click();
+                }
+            });
+        });
+    </script> *@
+
+    <script>
+    $(document).ready(function () {
+        $("#email").kendoTextBox({
+            placeholder: "Enter your email...",
+            label: "Email"
+        });
+
+        $("#password").kendoTextBox({
+            placeholder: "Enter password...",
+            label: "Password"
+        });
+
+        var validator = $("#loginForm").kendoValidator().data("kendoValidator");
+
+        $("#btnLogin").click(function () {
+            if (validator.validate()) {
+                var loginData = {
+                    email: $("#email").val(),
+                    password: $("#password").val()
+                };
+
+                // Premium Loading State
+                Swal.fire({
+                    title: 'Authenticating...',
+                    html: 'Please wait while we verify your credentials.',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                $.ajax({
+                    url: '@Url.Action("Login", "Account")',
+                    type: 'POST',
+                    data: loginData,
+                    success: function (response) {
+                        if (response.success) {
+                            // Success Toast
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Access Granted',
+                                text: 'Welcome to SolvePoint!',
+                                timer: 1500,
+                                showConfirmButton: false
+                            }).then(function () {
+                                if (response.role === "Admin") {
+                                    window.location.href = '@Url.Action("Index", "Admin")';
+                                } else if (response.role === "Employee") {
+                                    window.location.href = '@Url.Action("Dashboard", "Employee")';
+                                } else {
+                                    window.location.href = '@Url.Action("Dashboard", "Query")';
+                                }
+                            });
+                        } else {
+                            // Login Failed
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Login Failed',
+                                text: response.message,
+                                confirmButtonColor: '#2563eb'
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'System Error',
+                            text: 'Something went wrong on our end. Please try again.',
+                            confirmButtonColor: '#2563eb'
+                        });
+                    }
+                });
+            }
+        });
+
+        $(document).keypress(function (e) {
+            if (e.which == 13) {
+                $("#btnLogin").click();
+            }
+        });
+    });
+</script>
+
+</body>
+
+</html>

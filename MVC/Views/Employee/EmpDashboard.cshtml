@@ -1,0 +1,207 @@
+﻿@{
+    ViewData["Title"] = "Employee Workspace";
+    Layout = "_EmployeeLayout";
+}
+
+<style>
+     .workspace-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 10px 0;
+    }
+
+    .workspace-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #2d3436;
+    }
+
+    .workspace-subtitle {
+        font-size: 14px;
+        color: #6c757d;
+    }
+
+    .workspace-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .k-grid {
+        border: none;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .k-grid-header {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+
+    .badge-priority {
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 12px;
+        display: inline-block;
+    }
+
+    .grid-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .stats-box {
+        background: #f4f6f9;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        color: #555;
+    }
+    .workspace-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light border-start border-success border-4 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">My Lifetime Solved</h6>
+                    <h2 id="solvedCount" class="text-success">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light border-start border-warning border-4 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Total System Queue</h6>
+                    <h2 id="systemActive" class="text-warning">0</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light border-start border-danger border-4 shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-muted">Urgent (High Priority)</h6>
+                    <h2 id="urgentCount" class="text-danger">0</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="workspace-header">
+                <div>
+                    <div class="workspace-title">Employee Workspace</div>
+                    <div class="workspace-subtitle">Manage and resolve user queries</div>
+                </div>
+            </div>
+            <div class="workspace-card">
+                <h5 class="mb-3">Unsolved Queries</h5>
+                <div id="unsolvedGrid"></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="workspace-card">
+                <h5>My Distribution</h5>
+                <div id="performanceChart" style="height: 350px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            loadDashboardData();
+
+            $("#unsolvedGrid").kendoGrid({
+                dataSource: {
+                    transport: {
+                        read: { url: "@Url.Action("GetUnsolvedQueries", "Employee")", dataType: "json" },
+                        update: { url: "@Url.Action("UpdateQueryStatus", "Employee")", type: "POST", dataType: "json" }
+                    },
+                    schema: {
+                        model: {
+                            id: "c_QueryId",
+                            fields: {
+                                c_QueryId: { editable: false },
+                                c_Title: { editable: false },
+                                c_Priority: { editable: false },
+                                c_Status: { type: "string" },
+                                c_Comment: { type: "string" }
+                            }
+                        }
+                    },
+                    pageSize: 10
+                },
+                height: 450,
+                pageable: true,
+                sortable: true,
+                filterable: true,
+                columns: [
+                    { field: "c_Title", title: "Issue", width: "40%" },
+                    { field: "c_Priority", title: "Priority", width: "140px", template: "#= priorityTemplate(c_Priority) #" },
+                    { field: "c_Status", title: "Status", editor: statusDropDownEditor, width: "160px" },
+                    { field: "c_Comment", title: "Comment", hidden: true },
+                    { command: [{ name: "edit", text: "Resolve" }], title: "Action", width: "120px" }
+                ],
+                editable: "popup",
+                edit: function (e) {
+                    e.container.data("kendoWindow").title("Resolve Query");
+                    e.container.find("label[for='c_Title']").parent().hide();
+                },
+                // FIXED: Refresh dashboard stats after a successful update
+                save: function(e) {
+                    setTimeout(loadDashboardData, 600);
+                }
+            });
+        });
+
+        function loadDashboardData() {
+            $.get("@Url.Action("GetPersonalMetrics", "Employee")", function (data) {
+                $("#solvedCount").text(data.solvedCount);
+                $("#systemActive").text(data.activeCount);
+                $("#urgentCount").text(data.urgentCount);
+
+                $("#performanceChart").kendoChart({
+                    legend: { position: "bottom" },
+                    series: [{
+                        type: "donut",
+                        data: [
+                            { category: "My Solved", value: data.solvedCount, color: "#28a745" },
+                            { category: "Active Queue", value: data.activeCount, color: "#ffc107" },
+                            { category: "Urgent", value: data.urgentCount, color: "#dc3545" }
+                        ]
+                    }],
+                    tooltip: { visible: true, template: "${category}: ${value}" }
+                });
+            });
+        }
+
+        function priorityTemplate(priority) {
+            var color = priority === 'High' ? '#dc3545' : (priority === 'Medium' ? '#f39c12' : '#17a2b8');
+            return `<span class="badge-priority" style="background:${color}20;color:${color};border:1px solid ${color};">${priority}</span>`;
+        }
+
+        function statusDropDownEditor(container, options) {
+            $('<input name="' + options.field + '"/>')
+                .appendTo(container)
+                .kendoDropDownList({
+                    dataSource: ["In Progress", "Solved"]
+                });
+        }
+    </script>
+}

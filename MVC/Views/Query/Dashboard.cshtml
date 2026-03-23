@@ -1,0 +1,479 @@
+﻿@* @{
+
+    ViewData["Title"] = "User Profile";
+    Layout = "_QueryLayout";
+
+    var userName = Context.Session.GetString("UserName");
+    var role = Context.Session.GetString("UserRole");
+
+    var initial = !string.IsNullOrEmpty(userName) ? userName.Substring(0, 1).ToUpper() : "U";
+}
+
+<style>
+    .profile-wrapper {
+        max-width: 700px;
+        margin: auto;
+    }
+
+    .profile-card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, #4e73df, #6f42c1);
+        color: white;
+        padding: 30px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: white;
+        color: #4e73df;
+        font-size: 32px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: auto;
+    }
+
+    .profile-body {
+        padding: 30px;
+    }
+
+    .info-row {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .info-row:last-child {
+        border-bottom: none;
+    }
+</style>
+
+<div class="container py-5">
+
+    <div class="profile-wrapper">
+
+        <div class="card profile-card">
+
+            <!-- Header -->
+            <div class="profile-header">
+
+                <div class="profile-avatar">
+                    @initial
+                </div>
+
+                <h4 class="mt-3 mb-1">@userName</h4>
+
+                <span class="badge bg-light text-dark">
+                    @role
+                </span>
+
+            </div>
+
+            <!-- Body -->
+            <div class="profile-body">
+
+                <div class="info-row">
+                    <strong>Company Name</strong>
+                    <div class="text-muted">@userName</div>
+                </div>
+
+                <div class="info-row">
+                    <strong>User Role</strong>
+                    <div class="text-muted">@role</div>
+                </div>
+
+                <div class="info-row">
+                    <strong>Account Status</strong>
+                    <div>
+                        <span class="badge bg-success">Active</span>
+                    </div>
+                </div>
+
+
+                <div class="info-row">
+                    <strong>Support Access</strong>
+                    <div class="text-muted">Query Management System</div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div> *@
+
+
+
+@{
+    ViewData["Title"] = "SolvePoint Analytics";
+    Layout = "_QueryLayout";
+    var userName = Context.Session.GetString("UserName") ?? "User";
+}
+
+<style>
+    :root {
+        --glass-bg: rgba(255, 255, 255, 0.9);
+        --accent-gradient: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+        --status-success: #10b981;
+        --status-pending: #f59e0b;
+        --status-danger: #ef4444;
+    }
+
+    body {
+        background-color: #f8fafc;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #1e293b;
+    }
+
+    /* Animations */
+    .animate-in { animation: fadeInUp 0.8s ease-out; }
+    @@keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hero Section Refined */
+    .hero-section {
+        background: var(--accent-gradient);
+        border-radius: 24px;
+        padding: 3rem;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        border: none;
+    }
+
+    .hero-section::after {
+        content: "";
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    /* Stat Cards Floating Effect */
+    .stat-card {
+        background: white;
+        border: none !important;
+        border-radius: 20px;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px -10px rgba(0,0,0,0.08);
+    }
+
+    .stat-icon {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Grid & Chart Containers */
+    .glass-card {
+        background: white;
+        border-radius: 20px;
+        border: 1px solid #f1f5f9;
+        box-shadow: var(--card-shadow);
+    }
+
+    /* Kendo Customizations */
+    .k-grid { border: none !important; background: transparent !important; }
+    .k-grid-header { background: #f8fafc !important; border-bottom: 2px solid #f1f5f9 !important; }
+    .k-grid-header th { 
+        background: transparent !important; 
+        color: #94a3b8 !important; 
+        font-weight: 700 !important; 
+        text-transform: uppercase; 
+        font-size: 11px !important;
+        letter-spacing: 0.05em;
+        padding: 15px 20px !important;
+    }
+    .k-grid td { padding: 18px 20px !important; border-bottom: 1px solid #f1f5f9 !important; vertical-align: middle; }
+
+    .status-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+    .btn-sync {
+        background: white;
+        color: #4f46e5;
+        font-weight: 700;
+        border-radius: 50px;
+        padding: 12px 28px;
+        border: none;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+</style>
+
+<div class="container-fluid py-4 px-lg-5 animate-in">
+
+    <div class="hero-section shadow-lg mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <span class="badge bg-white text-primary mb-3 px-3 py-2 rounded-pill small fw-bold">DASHBOARD LIVE</span>
+                <h1 class="display-5 fw-bold mb-2">Hello, @userName!</h1>
+                <p class="lead opacity-75 mb-0">Your workspace is optimized. You have <span id="pendingHeroCount" class="fw-bold">0</span> queries awaiting attention.</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-4 mt-md-0">
+                <button class="btn btn-sync" onclick="refreshDashboard()">
+                    <i class="bi bi-arrow-repeat me-2"></i> Sync Analytics
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mb-4">
+        @{
+            var stats = new[] {
+                ("Total Raised", "totalCount", "primary", "bi-collection-fill"),
+                ("Resolved", "resolvedCount", "success", "bi-check-circle-fill"),
+                ("Awaiting", "pendingCount", "warning", "bi-clock-history"),
+                ("Critical", "unresolvedCount", "danger", "bi-exclamation-triangle-fill")
+            };
+        }
+        @foreach (var s in stats)
+        {
+            <div class="col-xl-3 col-md-6">
+                <div class="stat-card p-4 border-start border-@s.Item3 border-5">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div>
+                            <h6 class="text-muted small fw-bold mb-1 text-uppercase">@s.Item1</h6>
+                            <h2 class="mb-0 fw-bold" id="@s.Item2">0</h2>
+                        </div>
+                        <div class="stat-icon bg-@s.Item3 bg-opacity-10 text-@s.Item3">
+                            <i class="bi @s.Item4 fs-4"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="glass-card p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0 text-dark">Query Volume Trend</h5>
+                    <div class="small text-muted">Last 7 Active Days</div>
+                </div>
+                <div id="trendChart" style="height: 320px;"></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="glass-card p-4 h-100 text-center">
+                <h5 class="fw-bold mb-4 text-start">Resolution Mix</h5>
+                <div id="donutChart" style="height: 250px;"></div>
+                <div class="mt-4 p-3 bg-light rounded-4 border-0 shadow-sm">
+                    <div class="row g-0">
+                        <div class="col-6 border-end">
+                            <div class="small text-muted mb-1">Efficiency</div>
+                            <div class="h5 fw-bold text-success mb-0" id="efficiencyRate">0%</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="small text-muted mb-1">Criticality</div>
+                            <div class="h5 fw-bold text-danger mb-0" id="criticalRate">0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-card overflow-hidden">
+        <div class="p-4 border-bottom bg-white d-flex flex-wrap justify-content-between align-items-center gap-3">
+            <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-lightning-charge-fill me-2 text-warning"></i>Live Ticket Monitor</h5>
+            <div class="d-flex gap-3 align-items-center">
+                <span id="gridSearch"></span>
+                @* <button class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-bold" onclick="exportToExcel()">
+                    <i class="bi bi-download me-1"></i> EXPORT
+                </button> *@
+            </div>
+        </div>
+        <div id="enhancedGrid"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            initDashboard();
+        });
+
+        function refreshDashboard() {
+            $("#enhancedGrid").data("kendoGrid").dataSource.read();
+        }
+
+        function exportToExcel() {
+            $("#enhancedGrid").data("kendoGrid").saveAsExcel();
+        }
+
+        function initDashboard() {
+            // 1. Grid Configuration (Top 5, No Eye Button, Export Enabled)
+            $("#enhancedGrid").kendoGrid({
+                dataSource: {
+                    transport: {
+                        read: { url: "@Url.Action("GetUserQueries", "Query")", dataType: "json" }
+                    },
+                    pageSize: 5,
+                    schema: {
+                        model: { fields: { c_QueryDate: { type: "date" } } }
+                    },
+                    sort: { field: "c_QueryDate", dir: "desc" }
+                },
+                excel: { fileName: "SolvePoint_Tickets.xlsx", allPages: true },
+                scrollable: false,
+                sortable: true,
+                pageable: false,
+                columns: [
+                    {
+                        field: "c_Title",
+                        title: "Ticket Details",
+                        width: "40%",
+                        template: "<div><div class='fw-bold text-dark'>#: c_Title #</div>" +
+                                  "<div class='small text-muted'>ID: SP-#: data.c_QueryId ? c_QueryId : '000' #</div></div>"
+                    },
+                    {
+                        field: "c_Priority",
+                        title: "Priority",
+                        width: "150px",
+                        template: (d) => `<span class="badge rounded-pill ${prioClass(d.c_Priority)}" style="padding: 7px 12px; min-width: 80px;">${d.c_Priority}</span>`
+                    },
+                    { field: "c_QueryDate", title: "Raised Date", format: "{0:dd MMM yyyy}", width: "150px" },
+                    {
+                        field: "c_Status",
+                        title: "Status",
+                        width: "180px",
+                        template: (d) => `<span><span class="status-indicator ${statusColor(d.c_Status)}"></span><span class='fw-bold'>${d.c_Status}</span></span>`
+                    }
+                ],
+                dataBound: function () {
+                    updateAnalytics();
+                }
+            });
+
+            // Search Bar Fix
+            $("#gridSearch").kendoTextBox({
+                placeholder: "Filter tickets...",
+                prefixOptions: { icon: "search" },
+                input: function () {
+                    var q = this.value();
+                    $("#enhancedGrid").data("kendoGrid").dataSource.filter({ field: "c_Title", operator: "contains", value: q });
+                }
+            });
+        }
+
+        function updateAnalytics() {
+            const data = $("#enhancedGrid").data("kendoGrid").dataSource.data();
+            let stats = { res: 0, pen: 0, crit: 0, total: data.length };
+            let trendMap = {};
+
+            data.forEach(i => {
+                let s = (i.c_Status || "").toLowerCase();
+                if (s.includes("resolve") || s.includes("solve")) stats.res++;
+                else if (s.includes("pend") || s.includes("open")) stats.pen++;
+
+                if (i.c_Priority === "High") stats.crit++;
+
+                let d = kendo.toString(i.c_QueryDate, "dd MMM");
+                trendMap[d] = (trendMap[d] || 0) + 1;
+            });
+
+            $("#totalCount").text(stats.total);
+            $("#resolvedCount").text(stats.res);
+            $("#pendingCount").text(stats.pen);
+            $("#unresolvedCount").text(stats.crit);
+            $("#pendingHeroCount").text(stats.pen);
+
+            let eff = stats.total > 0 ? Math.round((stats.res / stats.total) * 100) : 0;
+            let critP = stats.total > 0 ? Math.round((stats.crit / stats.total) * 100) : 0;
+            $("#efficiencyRate").text(eff + "%");
+            $("#criticalRate").text(critP + "%");
+
+            renderTrend(trendMap);
+            renderDonut(stats);
+        }
+
+        function renderTrend(trendMap) {
+            let sortedDates = Object.keys(trendMap).sort((a, b) => new Date(a) - new Date(b)).slice(-7);
+            let trendValues = sortedDates.map(d => trendMap[d]);
+
+            $("#trendChart").kendoChart({
+                chartArea: { background: "transparent" },
+                seriesDefaults: {
+                    type: "column",
+                    overlay: { gradient: "glass" },
+                    cornerRadius: 12,
+                    border: { width: 0 }
+                },
+                series: [{ data: trendValues, color: "#6366f1" }],
+                valueAxis: { 
+                    line: { visible: false }, 
+                    majorGridLines: { color: "#f1f5f9", dashType: "dash" },
+                    labels: { font: "12px sans-serif", color: "#94a3b8" }
+                },
+                categoryAxis: {
+                    categories: sortedDates,
+                    majorGridLines: { visible: false },
+                    labels: { font: "12px sans-serif", color: "#94a3b8" }
+                },
+                tooltip: { visible: true, background: "#1e293b", color: "#fff", border: { width: 0 } }
+            });
+        }
+
+        function renderDonut(stats) {
+            $("#donutChart").kendoChart({
+                chartArea: { background: "transparent" },
+                series: [{
+                    type: "donut",
+                    data: [
+                        { category: "Resolved", value: stats.res, color: "#10b981" },
+                        { category: "Pending", value: stats.pen, color: "#f59e0b" },
+                        { category: "Critical", value: stats.crit, color: "#ef4444" }
+                    ],
+                    holeSize: 60,
+                    size: 40
+                }],
+                legend: { position: "bottom", labels: { font: "12px sans-serif", color: "#64748b" } },
+                tooltip: { visible: true, template: "#= category #: #= value #" }
+            });
+        }
+
+        function prioClass(p) {
+            if (p === "High") return "bg-danger text-white";
+            if (p === "Medium") return "bg-warning text-dark";
+            return "bg-info text-dark";
+        }
+
+        function statusColor(s) {
+            let st = (s || "").toLowerCase();
+            if (st.includes("resolve")) return "bg-success";
+            if (st.includes("pend")) return "bg-warning";
+            return "bg-danger";
+        }
+    </script>
+}

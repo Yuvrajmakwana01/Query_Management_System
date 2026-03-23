@@ -1,0 +1,179 @@
+﻿@{
+    ViewData["Title"] = "Employee Workspace";
+    Layout = "_EmployeeLayout";
+}
+<link rel="stylesheet" href="https://kendo.cdn.telerik.com/themes/6.7.0/material/material-main.css" />
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://kendo.cdn.telerik.com/2024.1.130/js/kendo.all.min.js"></script>
+
+<style>
+    .k-card {
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 20px;
+    }
+
+    .stat-value {
+        font-size: 2.2rem;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .priority-High {
+        color: #d32f2f;
+        font-weight: bold;
+    }
+
+    .priority-Medium {
+        color: #f57c00;
+        font-weight: bold;
+    }
+
+    .priority-Low {
+        color: #388e3c;
+        font-weight: bold;
+    }
+
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 15px;
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 style="color: #3f51b5; font-weight: 300;">Support Desk Workspace</h2>
+            <p class="text-muted">Hello, Agent. You have 3 urgent tickets requiring attention.</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="k-button k-button-solid-base k-rounded-md">Refresh Queue</button>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="k-card stat-card">
+                <span class="stat-value text-danger">05</span>
+                <span class="k-label">New Queries</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="k-card stat-card">
+                <span class="stat-value text-warning">03</span>
+                <span class="k-label">In Progress</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="k-card stat-card">
+                <span class="stat-value text-success">142</span>
+                <span class="k-label">Total Solved</span>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="k-card stat-card" style="background: #3f51b5; color: white;">
+                <span class="stat-value">98%</span>
+                <span class="k-label">SLA Compliance</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="k-card p-4">
+        <div id="queryGrid"></div>
+    </div>
+</div>
+
+<div id="updateWindow" style="display:none;">
+    <div class="p-3">
+        <label class="k-label k-form-label">Update Status:</label>
+        <input id="statusDropdown" style="width: 100%; margin-bottom: 15px;" />
+
+        <label class="k-label k-form-label">Resolution Comments:</label>
+        <textarea class="k-textarea" style="width: 100%; height: 100px; margin-bottom: 15px;"
+            placeholder="Describe the resolution steps..."></textarea>
+
+        <button id="btnSave" class="k-button k-button-solid-primary k-rounded-md w-100">Apply Changes</button>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // --- DUMMY DATA ---
+            var dummyData = [
+                { c_QueryId: 1001, c_Title: "Database Connection Failure", c_Priority: "High", c_Status: "Open", c_Date: "2024-03-05 09:00" },
+                { c_QueryId: 1002, c_Title: "User Login UI Glitch", c_Priority: "Medium", c_Status: "In Progress", c_Date: "2024-03-05 10:15" },
+                { c_QueryId: 1003, c_Title: "Forgot Password Email Not Sending", c_Priority: "High", c_Status: "Open", c_Date: "2024-03-05 11:30" },
+                { c_QueryId: 1004, c_Title: "Monthly Report Export Slow", c_Priority: "Low", c_Status: "In Progress", c_Date: "2024-03-04 14:00" },
+                { c_QueryId: 1005, c_Title: "API Documentation Request", c_Priority: "Low", c_Status: "Solved", c_Date: "2024-03-04 16:45" }
+            ];
+
+            // 1. Initialize Grid
+            $("#queryGrid").kendoGrid({
+                dataSource: {
+                    data: dummyData,
+                    pageSize: 10
+                },
+                sortable: true,
+                filterable: true,
+                pageable: true,
+                columns: [
+                    { field: "c_QueryId", title: "ID", width: "80px" },
+                    { field: "c_Title", title: "Ticket Description" },
+                    {
+                        field: "c_Priority",
+                        title: "Priority",
+                        width: "120px",
+                        template: "<span class='priority-#:c_Priority#'>#:c_Priority#</span>"
+                    },
+                    {
+                        field: "c_Status",
+                        title: "Status",
+                        width: "140px",
+                        template: function (dataItem) {
+                            var color = dataItem.c_Status == "Open" ? "k-badge-warning" :
+                                dataItem.c_Status == "Solved" ? "k-badge-success" : "k-badge-info";
+                            return `<span class='k-badge k-badge-solid k-badge-rounded rounded px-2 ${color}'>${dataItem.c_Status}</span>`;
+                        }
+                    },
+                    { field: "c_Date", title: "Submitted", width: "160px" },
+                    {
+                        command: { text: "Manage", click: openModal },
+                        title: "Action",
+                        width: "110px"
+                    }
+                ]
+            });
+
+            // 2. Initialize Status Dropdown
+            $("#statusDropdown").kendoDropDownList({
+                dataSource: ["In Progress", "Solved"]
+            });
+        });
+
+        function openModal(e) {
+            e.preventDefault();
+            var dataItem = this.dataItem($(e.currentTarget).closest("tr"));
+
+            $("#updateWindow").kendoWindow({
+                width: "400px",
+                title: "Manage Ticket #" + dataItem.c_QueryId,
+                modal: true,
+                visible: false
+            }).data("kendoWindow").center().open();
+        }
+
+        $("#btnSave").click(function () {
+            alert("Design Mode: Data would be saved to PostgreSQL now!");
+            $("#updateWindow").data("kendoWindow").close();
+        });
+    </script>
+}
