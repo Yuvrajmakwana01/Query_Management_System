@@ -18,5 +18,10 @@ namespace Repository.Interfaces
 
         public Task<List<t_User>> GetAllUsers();
         public Task DeleteUser(int id);
+
+
+        public Task<List<Dictionary<string, object>>> GetAllEmployee();
+
+        public Task DeleteEmployee(int id);
     }
 }

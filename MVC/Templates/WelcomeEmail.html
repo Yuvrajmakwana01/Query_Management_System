@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to SolvePoint</title>
+    <style>
+        body { margin: 0; padding: 0; background-color: #f0f2f5; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        .container { width: 100%; padding: 40px 0; background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); }
+        .email-card { 
+            max-width: 550px; 
+            margin: 0 auto; 
+            background: #ffffff; 
+            border-radius: 24px; 
+            overflow: hidden; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1); 
+        }
+        .hero-gradient { 
+            background: linear-gradient(135deg, #292727 0%, #2b375b 100%); 
+            padding: 60px 40px; 
+            text-align: center; 
+            color: #ffffff;
+        }
+        .logo { font-size: 28px; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; display: block; text-decoration: none; color: white; }
+        .logo span { color: #38bdf8; }
+        .welcome-badge { 
+            display: inline-block; 
+            background: rgba(56, 189, 248, 0.15); 
+            color: #38bdf8; 
+            padding: 6px 16px; 
+            border-radius: 100px; 
+            font-size: 12px; 
+            font-weight: 700; 
+            text-transform: uppercase; 
+            margin-bottom: 20px;
+        }
+        .content-body { padding: 40px; text-align: center; }
+        .headline { font-size: 26px; color: #1e293b; margin: 0 0 15px 0; font-weight: 800; }
+        .subtext { font-size: 16px; color: #64748b; line-height: 1.6; margin-bottom: 30px; }
+        
+        .info-box { 
+            background: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 16px; 
+            padding: 20px; 
+            margin-bottom: 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .info-label { font-size: 13px; color: #94a3b8; margin-bottom: 4px; display: block; }
+        .info-value { font-size: 15px; color: #1e293b; font-weight: 600; }
+
+        .cta-button { 
+            display: inline-block; 
+            background: #38bdf8; 
+            background: linear-gradient(to right, #38bdf8, #2563eb);
+            color: #ffffff !important; 
+            padding: 18px 45px; 
+            text-decoration: none; 
+            border-radius: 14px; 
+            font-weight: 700; 
+            font-size: 16px; 
+            box-shadow: 0 10px 20px rgba(87, 129, 218, 0.2);
+            transition: transform 0.2s ease;
+        }
+        .footer { padding: 30px 40px; text-align: center; border-top: 1px solid #f1f5f9; }
+        .footer-links { margin-bottom: 15px; }
+        .footer-links a { color: #94a3b8; text-decoration: none; font-size: 13px; margin: 0 10px; }
+        .footer-copy { font-size: 12px; color: #cbd5e1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="email-card">
+            <div class="hero-gradient">
+                <div >
+                    <img src="{{Logo}}" width="500" style="display:block; align-items: center; margin-left:0; padding-right: 10;"  />
+                    <!-- <img src="/MVC/wwwroot/Images/QueryLogo.png" width="500" style="display:block; align-items: center; margin-left:0; padding-right: 10;" /> -->
+                </div>
+                <!-- <a href="#" class="logo">Solve<span>Point</span></a> -->
+                <div style="margin-top: 10px;" class="welcome-badge">New Member</div>
+            </div>
+
+            <div class="content-body">
+                <h2 class="headline">Ready to solve, {{Name}}?</h2>
+                <p class="subtext">
+                    Your account is active and the platform is yours. We’ve built SolvePoint to help you streamline every workflow—let’s get started.
+                </p>
+
+                <div class="info-box">
+                    <div>
+                        <span class="info-label">Account Identity</span>
+                        <span class="info-value">{{Email}}</span>
+                    </div>
+                </div>
+
+                <a href="{{LoginLink}}" class="cta-button">Enter SolvePoint</a>
+            </div>
+
+            <div class="footer">
+                <div class="footer-links">
+                    <a href="#">Support</a>
+                    <a href="#">Privacy</a>
+                    <a href="#">Community</a>
+                </div>
+                <p class="footer-copy">
+                    &copy; 2026 SolvePoint. All rights reserved. <br>
+                    You received this because you joined the SolvePoint network.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

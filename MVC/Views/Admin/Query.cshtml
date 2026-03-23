@@ -1,4 +1,4 @@
-﻿@{
+﻿@* @{
     Layout = "../Shared/_AdminLayout.cshtml";
 }
 
@@ -14,19 +14,38 @@
         text-align: center;
         min-width: 80px;
     }
-    .status-pending { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-    .status-resolved { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .status-closed { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+
+    .status-resolved {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .status-closed {
+        background: #e2e3e5;
+        color: #383d41;
+        border: 1px solid #d6d8db;
+    }
 
     /* Layout enhancements */
     .grid-card {
         background: #fff;
         border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         padding: 20px;
         margin-top: 20px;
     }
-    .k-grid-header { font-weight: bold; }
+
+    .k-grid-header {
+        font-weight: bold;
+    }
+
     .description-cell {
         white-space: nowrap;
         overflow: hidden;
@@ -40,7 +59,7 @@
             <h2 class="text-primary"><i class="k-icon k-i-question fs-1 "></i> Query Management</h2>
             <p class="text-muted">Track and resolve user queries efficiently.</p>
         </div>
-      
+
     </div>
 
     <div class="grid-card">
@@ -48,101 +67,686 @@
     </div>
 </div>
 
-@section Scripts{
-<script>
-$(document).ready(function () {
-    $("#grid").kendoGrid({
-        dataSource: {
-            transport: {
-                read: {
-                    url: "/Admin/GetAllQuery",
-                    dataType: "json"
-                }
-            },
-            pageSize: 10,
-            schema: {
-                model: {
-                    id: "c_QueryId",
-                    fields: {
-                        c_QueryDate: { type: "date" }
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#grid").kendoGrid({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "/Admin/GetAllQuery",
+                            dataType: "json"
+                        }
+                    },
+                    pageSize: 10,
+                    schema: {
+                        model: {
+                            id: "c_QueryId",
+                            fields: {
+                                c_QueryDate: { type: "date" }
+                            }
+                        }
                     }
-                }
-            }
-        },
-        height: 550,
-        pageable: { refresh: true, pageSizes: true },
-        sortable: true,
-        filterable: true,
-        toolbar: ["search"], // Added search for quick lookup
-        columns: [
-            { field: "c_QueryId", title: "ID", width: "70px", attributes: { style: "text-align: center;" } },
-            { field: "c_Title", title: "Title", width: "150px", template: "<strong>#: c_Title #</strong>" },
-            { 
-                field: "c_Description", 
-                title: "Description", 
-                width: "200px",
-                attributes: { class: "description-cell", title: "#: c_Description #" } 
-            },
-            { 
-                field: "c_QueryDate", 
-                title: "Submitted On", 
-                width: "130px",
-                format: "{0:MM/dd/yyyy}" // Clean date format
-            },
-            { 
-                field: "c_Status", 
-                title: "Status", 
-                width: "110px",
-                template: function(dataItem) {
-                    var status = dataItem.c_Status ? dataItem.c_Status.toLowerCase() : 'pending';
-                    var cssClass = "status-pending";
-                    if(status === 'resolved') cssClass = "status-resolved";
-                    if(status === 'closed') cssClass = "status-closed";
-                    return "<span class='status-pill " + cssClass + "'>" + dataItem.c_Status + "</span>";
-                }
-            },
-            { field: "c_EmpName", title: "Assigned To", width: "120px" },
-            {
-                title: "Actions",
-                width: "110px",
-                attributes: { style: "text-align: center;" },
-                template: `<button class='k-button k-button-md k-rounded-md k-button-solid-error' 
-                                   onclick='deleteQuery(#=c_QueryId#)'>
-                                <span class='k-icon k-i-trash rounded-3'></span>
-                           </button>`
-            }
-        ]
-    });
-});
+                },
+                height: 550,
+                pageable: { refresh: true, pageSizes: true },
+                sortable: true,
+                filterable: true,
+                toolbar: ["search"], // Added search for quick lookup
+                columns: [
+                    { field: "c_QueryId", title: "ID", width: "70px", attributes: { style: "text-align: center;" } },
+                    { field: "c_Title", title: "Title", width: "150px", template: "<strong>#: c_Title #</strong>" },
+                    {
+                        field: "c_Description",
+                        title: "Description",
+                        width: "200px",
+                        attributes: { class: "description-cell", title: "#: c_Description #" }
+                    },
+                    {
+                        field: "c_QueryDate",
+                        title: "Submitted On",
+                        width: "130px",
+                        format: "{0:MM/dd/yyyy}" // Clean date format
+                    },
+                    {
+                        field: "c_Status",
+                        title: "Status",
+                        width: "110px",
+                        template: function (dataItem) {
+                            var status = dataItem.c_Status ? dataItem.c_Status.toLowerCase() : 'pending';
+                            var cssClass = "status-pending";
+                            if (status === 'resolved') cssClass = "status-resolved";
+                            if (status === 'closed') cssClass = "status-closed";
+                            return "<span class='status-pill " + cssClass + "'>" + dataItem.c_Status + "</span>";
+                        }
+                    },
+                    { field: "c_EmpName", title: "Assigned To", width: "120px" },
+                    {
+                        title: "Actions",
+                        width: "110px",
+                        attributes: { style: "text-align: center;" },
+                        template: `<button class='k-button k-button-md k-rounded-md k-button-solid-error' 
+                                               onclick='deleteQuery(#=c_QueryId#)'>
+                                            <span class='k-icon k-i-trash rounded-3'></span>
+                                       </button>`
+                    }
+                ]
+            });
+        });
 
-function reloadGrid() {
-    $("#grid").data("kendoGrid").dataSource.read();
+        function reloadGrid() {
+            $("#grid").data("kendoGrid").dataSource.read();
+        }
+
+        function deleteQuery(id) {
+            if (confirm("⚠️ Are you sure you want to remove this query record?")) {
+                // Show a loading overlay on the grid
+                kendo.ui.progress($("#grid"), true);
+
+                $.ajax({
+                    url: "/Admin/Delete",
+                    type: "POST",
+                    data: { id: id },
+                    success: function (response) {
+                        kendo.ui.progress($("#grid"), false);
+                        if (response.success) {
+                            alert("✅ " + response.message);
+                            reloadGrid();
+                        } else {
+                            alert("❌ " + response.message);
+                        }
+                    },
+                    error: function () {
+                        kendo.ui.progress($("#grid"), false);
+                        alert("Critical server error occurred.");
+                    }
+                });
+            }
+        }
+
+ 
+    </script>
+} *@
+
+
+@{
+    Layout = "../Shared/_AdminLayout.cshtml";
 }
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+    :root {
+        --sp-primary: #2563eb;
+        --sp-primary-glow: rgba(37, 99, 235, 0.1);
+        --sp-bg: #f8fafc;
+        --sp-text-main: #0f172a;
+        --sp-text-muted: #64748b;
+        --sp-card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+    }
 
-function deleteQuery(id) {
-    if (confirm("⚠️ Are you sure you want to remove this query record?")) {
-        // Show a loading overlay on the grid
-        kendo.ui.progress($("#grid"), true);
+    body {
+        background-color: var(--sp-bg);
+        font-family: 'Inter', -apple-system, sans-serif;
+    }
 
-        $.ajax({
-            url: "/Admin/Delete",
-            type: "POST",
-            data: { id: id },
-            success: function (response) {
-                kendo.ui.progress($("#grid"), false);
-                if (response.success) {
-                    alert("✅ " + response.message);
-                    reloadGrid();
-                } else {
-                    alert("❌ " + response.message);
+    /* Page Header */
+    .page-header {
+        background: #ffffff;
+        padding: 24px 32px;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: var(--sp-card-shadow);
+        margin-bottom: 24px;
+        display: flex;
+        align-items: center;
+    }
+
+    .header-icon-box {
+        width: 48px;
+        height: 48px;
+        background: var(--sp-primary-glow);
+        color: var(--sp-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        margin-right: 16px;
+    }
+
+    .header-title {
+        font-weight: 800;
+        color: var(--sp-text-main);
+        letter-spacing: -0.5px;
+        margin: 0;
+    }
+
+    .header-subtitle {
+        color: var(--sp-text-muted);
+        font-size: 14px;
+        margin: 0;
+    }
+
+    /* Premium Status Badges */
+    .status-pill {
+        padding: 6px 12px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        border: 1px solid transparent;
+        text-align: center;
+        min-width: 90px;
+    }
+
+    .status-pending {
+        background: #fffbeb;
+        color: #b45309;
+        border-color: #fde68a;
+    }
+
+    .status-resolved {
+        background: #f0fdf4;
+        color: #15803d;
+        border-color: #bbf7d0;
+    }
+
+    .status-closed {
+        background: #f1f5f9;
+        color: #475569;
+        border-color: #e2e8f0;
+    }
+
+    /* Grid Container */
+    .grid-card {
+        background: #ffffff;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: var(--sp-card-shadow);
+        padding: 12px;
+    }
+
+    /* Kendo UI Custom Overrides */
+    .k-grid {
+        border: none !important;
+    }
+
+    .k-grid-header {
+        background: #f8fafc !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+    }
+
+    .k-grid-header .k-link {
+        color: var(--sp-text-muted) !important;
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+    }
+
+    .k-grid td {
+        border-bottom: 1px solid #f1f5f9 !important;
+        padding: 16px 12px !important;
+        vertical-align: middle;
+    }
+
+    .k-master-row:hover {
+        background-color: #f8fafc !important;
+    }
+
+    .description-cell {
+        color: var(--sp-text-muted);
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Delete Button */
+    .btn-delete-action {
+        background: #fff1f2 !important;
+        color: #e11d48 !important;
+        border: 1px solid #fecdd3 !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-delete-action:hover {
+        background: #e11d48 !important;
+        color: #ffffff !important;
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="container-fluid mt-4 px-4">
+    <div class="page-header">
+        <div class="header-icon-box">
+            <i class="k-icon k-i-question" style="font-size: 24px;"></i>
+        </div>
+        <div>
+            <h2 class="header-title">Query Management</h2>
+            <p class="header-subtitle">Streamline user inquiries and track resolution progress.</p>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 12px;">
+        <div class="card-body p-4">
+            <div class="row g-3 align-items-end">
+                <div class="col-lg-3 col-md-6">
+                    <label class="form-label fw-bold small text-muted">Keywords</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-white border-end-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input id="searchBox" class="form-control border-start-0"
+                            placeholder="Search title or description..." style="height: 38px;" />
+                    </div>
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <label class="form-label fw-bold small text-muted">Status</label>
+                    <input id="statusFilter" class="w-100" />
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <label class="form-label fw-bold small text-muted">From Date</label>
+                    <input id="fromDate" class="w-100" />
+                </div>
+
+                <div class="col-lg-2 col-md-6">
+                    <label class="form-label fw-bold small text-muted">To Date</label>
+                    <input id="toDate" class="w-100" />
+                </div>
+
+                <div class="col-lg-3 col-md-6 d-flex gap-2">
+                    <button id="btnSearch"
+                        class="btn btn-primary w-100 fw-bold d-flex align-items-center justify-content-center"
+                        style="height: 38px; border-radius: 8px;">
+                        <i class="bi bi-funnel me-2"></i> Filter
+                    </button>
+                    <button id="btnClear"
+                        class="btn btn-outline-secondary w-100 fw-bold d-flex align-items-center justify-content-center"
+                        style="height: 38px; border-radius: 8px;">
+                        <i class="bi bi-arrow-counterclockwise me-2"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-card">
+        <div id="grid"></div>
+    </div>
+
+    <br><br>
+</div>
+
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Reusable Toast Configuration
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
                 }
-            },
-            error: function() {
-                kendo.ui.progress($("#grid"), false);
-                alert("Critical server error occurred.");
+            });
+
+            // DatePickers
+            $("#fromDate").kendoDatePicker();
+            $("#toDate").kendoDatePicker();
+
+            // Status dropdown
+            $("#statusFilter").kendoDropDownList({
+                optionLabel: "All Status",
+                dataSource: ["Open", "In Progress", "Solved"]
+            });
+
+            // 🔍 Search button
+            $("#btnSearch").click(function () {
+                var keyword = $("#searchBox").val() || "";
+                var status = $("#statusFilter").data("kendoDropDownList").value() || "";
+                var fromDateObj = $("#fromDate").data("kendoDatePicker").value();
+                var toDateObj = $("#toDate").data("kendoDatePicker").value();
+
+                var fromStr = fromDateObj ? fromDateObj.toISOString() : "";
+                var toStr = toDateObj ? toDateObj.toISOString() : "";
+
+                var grid = $("#grid").data("kendoGrid");
+                var newUrl = `/Admin/SearchQueries?keyword=${encodeURIComponent(keyword)}&status=${encodeURIComponent(status)}&fromDate=${fromStr}&toDate=${toStr}`;
+
+                grid.dataSource.transport.options.read.url = newUrl;
+                grid.dataSource.read();
+            });
+
+            // 🔄 Clear button
+            $("#btnClear").click(function () {
+                $("#searchBox").val("");
+                $("#statusFilter").data("kendoDropDownList").value("");
+                $("#fromDate").data("kendoDatePicker").value(null);
+                $("#toDate").data("kendoDatePicker").value(null);
+
+                var grid = $("#grid").data("kendoGrid");
+                grid.dataSource.transport.options.read.url = "/Admin/GetAllQuery";
+                grid.dataSource.read();
+            });
+
+            // Grid Initialization
+            $("#grid").kendoGrid({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "/Admin/GetAllQuery",
+                            dataType: "json"
+                        }
+                    },
+                    pageSize: 10,
+                    schema: {
+                        model: {
+                            id: "c_QueryId",
+                            fields: {
+                                c_QueryDate: { type: "date" }
+                            }
+                        }
+                    }
+                },
+                height: 600,
+                pageable: { refresh: true, pageSizes: true, buttonCount: 5 },
+                sortable: true,
+                filterable: true,
+                columns: [
+                    {
+                        field: "c_QueryId",
+                        title: "ID",
+                        width: "80px",
+                        attributes: { style: "text-align: center; font-weight: 600; color: \\#94a3b8;" }
+                    },
+                    {
+                        field: "c_Title",
+                        title: "Query Title",
+                        width: "200px",
+                        template: "<span style='color:\\#0f172a; font-weight:600;'>#: c_Title #</span>"
+                    },
+                    {
+                        field: "c_Description",
+                        title: "Description",
+                        width: "250px",
+                        attributes: { class: "description-cell", title: "#: c_Description #" }
+                    },
+                    {
+                        field: "c_QueryDate",
+                        title: "Submitted",
+                        width: "140px",
+                        format: "{0:MMM dd, yyyy}"
+                    },
+                    {
+                        field: "c_Status",
+                        title: "Status",
+                        width: "130px",
+                        template: function (dataItem) {
+                            var status = dataItem.c_Status ? dataItem.c_Status.toLowerCase() : 'pending';
+                            var cssClass = "status-pending";
+                            if (status === 'resolved' || status === 'solved') cssClass = "status-resolved";
+                            if (status === 'closed') cssClass = "status-closed";
+                            return "<span class='status-pill " + cssClass + "'>" + dataItem.c_Status + "</span>";
+                        }
+                    },
+                    {
+                        field: "c_EmpName",
+                        title: "Assignee",
+                        width: "150px",
+                        template: "<span><i class='k-icon k-i-user' style='margin-right:8px; opacity:0.4;'></i>#: c_EmpName #</span>"
+                    },
+                    {
+                        title: "Actions",
+                        width: "100px",
+                        attributes: { style: "text-align: center;" },
+                        template: `<button class='k-button k-button-md k-rounded-md btn-delete-action' onclick='deleteQuery(#=c_QueryId#)'>
+                                    <span class='k-icon k-i-trash'></span>
+                                   </button>`
+                    }
+                ]
+            });
+
+            // Global access for the delete function
+            window.deleteQuery = function(id) {
+                Swal.fire({
+                    title: 'Delete Query?',
+                    text: "This will permanently remove the query record.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#e11d48', // Matches your red delete button
+                    cancelButtonColor: '#64748b',
+                    confirmButtonText: 'Yes, Delete it!',
+                    borderRadius: '16px'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Use SweetAlert loader instead of Kendo progress for better UI sync
+                        Swal.fire({
+                            title: 'Processing...',
+                            didOpen: () => { Swal.showLoading(); },
+                            allowOutsideClick: false
+                        });
+
+                        $.ajax({
+                            url: "/Admin/Delete",
+                            type: "POST",
+                            data: { id: id },
+                            success: function (response) {
+                                Swal.close();
+                                if (response.success) {
+                                    Toast.fire({
+                                        icon: 'success',
+                                        title: 'Query deleted successfully'
+                                    });
+                                    $("#grid").data("kendoGrid").dataSource.read();
+                                } else {
+                                    Swal.fire('Error', response.message, 'error');
+                                }
+                            },
+                            error: function () {
+                                Swal.close();
+                                Swal.fire('Critical Error', 'Server communication failed.', 'error');
+                            }
+                        });
+                    }
+                });
             }
         });
-    }
+    </script>
 }
-</script>
-}
+
+@* @section Scripts {
+    <script>
+        $(document).ready(function () {
+
+
+            // DatePicker
+            $("#fromDate").kendoDatePicker();
+            $("#toDate").kendoDatePicker();
+
+            // Status dropdown
+            $("#statusFilter").kendoDropDownList({
+                optionLabel: "All Status",
+                dataSource: ["Open", "In Progress", "Solved"]
+            });
+
+            // 🔍 Search button
+            /* $("#btnSearch").click(function () {
+
+                var keyword = $("#searchBox").val();
+                var status = $("#statusFilter").data("kendoDropDownList").value();
+                var fromDate = $("#fromDate").data("kendoDatePicker").value();
+                var toDate = $("#toDate").data("kendoDatePicker").value();
+
+                var grid = $("#grid").data("kendoGrid");
+
+                grid.dataSource.transport.options.read.url =
+                    `/Admin/SearchQueries?keyword=${keyword}&status=${status}&fromDate=${fromDate?.toISOString()}&toDate=${toDate?.toISOString()}`;
+
+                grid.dataSource.read();
+            }); */
+
+                $("#btnSearch").click(function () {
+                    var keyword = $("#searchBox").val() || "";
+                    var status = $("#statusFilter").data("kendoDropDownList").value() || "";
+                    var fromDateObj = $("#fromDate").data("kendoDatePicker").value();
+                    var toDateObj = $("#toDate").data("kendoDatePicker").value();
+
+                    var fromStr = fromDateObj ? fromDateObj.toISOString() : "";
+                    var toStr = toDateObj ? toDateObj.toISOString() : "";
+
+                    var grid = $("#grid").data("kendoGrid");
+
+                    // URL ko properly encode karein
+                    var newUrl = `/Admin/SearchQueries?keyword=${encodeURIComponent(keyword)}&status=${encodeURIComponent(status)}&fromDate=${fromStr}&toDate=${toStr}`;
+
+                    grid.dataSource.transport.options.read.url = newUrl;
+                    grid.dataSource.read();
+                });
+
+            // 🔄 Clear button
+            $("#btnClear").click(function () {
+
+                $("#searchBox").val("");
+                $("#statusFilter").data("kendoDropDownList").value("");
+                $("#fromDate").data("kendoDatePicker").value(null);
+                $("#toDate").data("kendoDatePicker").value(null);
+
+                var grid = $("#grid").data("kendoGrid");
+
+                grid.dataSource.transport.options.read.url = "/Admin/GetAllQuery";
+
+                grid.dataSource.read();
+            });
+
+            $("#searchBox").on("keyup", function () {
+
+                var keyword = $("#searchBox").val();
+                var status = $("#statusFilter").data("kendoDropDownList")?.value();
+                var fromDate = $("#fromDate").data("kendoDatePicker")?.value();
+                var toDate = $("#toDate").data("kendoDatePicker")?.value();
+
+                var grid = $("#grid").data("kendoGrid");
+
+                grid.dataSource.transport.options.read.url =
+                    `/Admin/SearchQueries?keyword=${keyword}&status=${status}&fromDate=${fromDate?.toISOString()}&toDate=${toDate?.toISOString()}`;
+
+                grid.dataSource.read();
+            });
+
+            $("#grid").kendoGrid({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: "/Admin/GetAllQuery",
+                            dataType: "json"
+                        }
+                    },
+                    pageSize: 10,
+                    schema: {
+                        model: {
+                            id: "c_QueryId",
+                            fields: {
+                                c_QueryDate: { type: "date" }
+                            }
+                        }
+                    }
+                },
+                height: 600,
+                pageable: { refresh: true, pageSizes: true, buttonCount: 5 },
+                sortable: true,
+                filterable: true,
+                toolbar: ["search"],
+                columns: [
+                    {
+                        field: "c_QueryId",
+                        title: "ID",
+                        width: "80px",
+                        attributes: { style: "text-align: center; font-weight: 600; color: \\#94a3b8;" }
+                    },
+                    {
+                        field: "c_Title",
+                        title: "Query Title",
+                        width: "200px",
+                        template: "<span style='color:\\#0f172a; font-weight:600;'>#: c_Title #</span>"
+                    },
+                    {
+                        field: "c_Description",
+                        title: "Description",
+                        width: "250px",
+                        attributes: { class: "description-cell", title: "#: c_Description #" }
+                    },
+                    {
+                        field: "c_QueryDate",
+                        title: "Submitted",
+                        width: "140px",
+                        format: "{0:MMM dd, yyyy}"
+                    },
+                    {
+                        field: "c_Status",
+                        title: "Status",
+                        width: "130px",
+                        template: function (dataItem) {
+                            var status = dataItem.c_Status ? dataItem.c_Status.toLowerCase() : 'pending';
+                            var cssClass = "status-pending";
+                            if (status === 'resolved' || status === 'solved') cssClass = "status-resolved";
+                            if (status === 'closed') cssClass = "status-closed";
+                            return "<span class='status-pill " + cssClass + "'>" + dataItem.c_Status + "</span>";
+                        }
+                    },
+                    {
+                        field: "c_EmpName",
+                        title: "Assignee",
+                        width: "150px",
+                        template: "<span><i class='k-icon k-i-user' style='margin-right:8px; opacity:0.4;'></i>#: c_EmpName #</span>"
+                    },
+                    {
+                        title: "Actions",
+                        width: "100px",
+                        attributes: { style: "text-align: center;" },
+                        template: "<button class='k-button k-button-md k-rounded-md btn-delete-action' onclick='deleteQuery(#=c_QueryId#)'>" +
+                            "<span class='k-icon k-i-trash'></span>" +
+                            "</button>"
+                    }
+                ]
+            });
+        });
+
+        function reloadGrid() {
+            var grid = $("#grid").data("kendoGrid");
+            if (grid) grid.dataSource.read();
+        }
+
+        function deleteQuery(id) {
+            if (confirm("⚠️ Confirm Deletion: Are you sure you want to remove this query record?")) {
+                kendo.ui.progress($("#grid"), true);
+
+                $.ajax({
+                    url: "/Admin/Delete",
+                    type: "POST",
+                    data: { id: id },
+                    success: function (response) {
+                        kendo.ui.progress($("#grid"), false);
+                        if (response.success) {
+                            reloadGrid();
+                        } else {
+                            alert("Error: " + response.message);
+                        }
+                    },
+                    error: function () {
+                        kendo.ui.progress($("#grid"), false);
+                        alert("A critical server error occurred.");
+                    }
+                });
+            }
+        }
+    </script>
+} *@

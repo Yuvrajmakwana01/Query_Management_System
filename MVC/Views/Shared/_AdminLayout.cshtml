@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,53 +8,373 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MVC.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/lib/kendo/kendo.default-v2.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
+    <link rel="stylesheet" href="~/lib/kendo/kendo.default-v2.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
+    <style>
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 10000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.6s cubic-bezier(0.645, 0.045, 0.355, 1);
+        }
 
+        /* Logo Pulse Effect */
+        .logo-animation {
+            position: relative;
+            display: inline-block;
+        }
+
+        .pulse-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border: 2px solid #4f46e5;
+            border-radius: 50%;
+            animation: ripple 1.5s infinite;
+        }
+
+        @@keyframes ripple {
+            0% {
+                width: 50px;
+                height: 50px;
+                opacity: 1;
+            }
+
+            100% {
+                width: 150px;
+                height: 150px;
+                opacity: 0;
+            }
+        }
+
+        /* Sleek Progress Bar */
+        .progress-container {
+            width: 200px;
+            height: 3px;
+            background: #f1f5f9;
+            margin: 0 auto;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #6366f1, #4f46e5);
+            animation: loadingFill 2s infinite ease-in-out;
+        }
+
+        @@keyframes loadingFill {
+            0% {
+                width: 0%;
+                margin-left: 0;
+            }
+
+            50% {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            100% {
+                width: 0%;
+                margin-left: 100%;
+            }
+        }
+
+        /* Fade Out Effect */
+        .preloader-hidden {
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(1.1);
+        }
+
+        #notifBox {
+            display: none;
+            position: absolute;
+            right: 20px;
+            top: 70px;
+            width: 330px;
+            max-height: 420px;
+            overflow-y: auto;
+            border-radius: 14px;
+            background: white;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            z-index: 999;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .notif-header {
+            padding: 12px;
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #notifList {
+            list-style: none;
+            padding: 10px;
+            margin: 0;
+        }
+
+        .notif-item {
+            background: #fff;
+            border: 1px solid #eee;
+            border-left: 4px solid #0d6efd;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .notif-text {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .notif-time {
+            font-size: 11px;
+            color: #777;
+            margin-top: 5px;
+        }
+
+        .mark-btn {
+            margin-top: 8px;
+            width: 100%;
+            border: none;
+            padding: 6px;
+            border-radius: 6px;
+            background: #28a745;
+            color: white;
+            font-size: 12px;
+        }
+    </style>
 </head>
+
 <body>
+
+    <div id="preloader">
+        <div class="loader-wrapper text-center">
+            <div class="logo-animation mb-4">
+                <span class="display-4 fw-bold text-primary">S</span>
+                <span class="display-4 fw-bold text-dark">P</span>
+                <div class="pulse-ring"></div>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar-fill"></div>
+            </div>
+
+            <h5 class="mt-4 fw-light tracking-widest text-uppercase" style="letter-spacing: 4px;">SolvePoint</h5>
+            <div class="text-muted small mt-2">Optimizing your experience...</div>
+        </div>
+    </div>
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand fw-bold text-primary" asp-area="" asp-controller="Admin" asp-action="Index"><i class="bi bi-journal-check text-success"></i>&nbsp; SolvePoint</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                @* <a class="navbar-brand fw-bold text-black" asp-area="" asp-controller="Admin" asp-action="Index">
+                    <i class="bi bi-intersect text-primary me-2"></i> Solve<span class="text-primary">Point</span>.
+                </a> *@
+                 <a class="navbar-brand" asp-controller="Admin" asp-action="Index">
+                    <img src="~/images/SolvePoint.png" width="160"  style="mix-blend-mode: multiply; border-radius: 12px;"/>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Index">Dashboard</a>
-                        </li>
-                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Query">Query</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin"
+                                asp-action="Index">Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="GetAllUsersPage">Users</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin"
+                                asp-action="Query">Query</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Logout">Logout</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin"
+                                asp-action="GetAllUsersPage">Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin" asp-action="Employee">Employee</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Admin"
+                                asp-action="Logout">Logout</a>
                         </li>
                     </ul>
                 </div>
             </div>
+
+            <div id="notifBell" style="position: relative; margin-right: 25px; cursor:pointer;">
+                <i class="k-icon k-i-bell" style="font-size:22px;"></i>
+                <span id="notifCount"
+                    style="position:absolute; top:-8px; right:-8px; background:red; color:white; border-radius:50%; padding:3px 7px; font-size:12px;"></span>
+            </div>
+
+            <div id="notifBox">
+                <div class="notif-header">
+                    <span>Notifications</span>
+                    <button onclick="clearNotifications()" class="btn btn-sm btn-light">Clear</button>
+                </div>
+                <ul id="notifList"></ul>
+            </div>
         </nav>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer mt-auto py-3 bg-light border-top">
         <div class="container">
-            &copy; 2026 - MVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+
+                <div class="text-muted small">
+                    <strong>SolvePoint</strong> <span class="text-primary">Admin</span> © 2026
+                </div>
+
+                <div class="my-2 my-md-0">
+                    <span class="text-muted small">
+                        <i class="bi bi-hdd-stack text-success me-1"></i>
+                        All Systems Operational
+                    </span>
+                </div>
+
+                <div class="text-muted small">
+                    <a href="/Home/Privacy" class="text-decoration-none text-muted me-3">Technical Help</a>
+                    <span class="badge bg-secondary-subtle text-secondary border">QMS</span>
+                </div>
+
+            </div>
         </div>
     </footer>
+
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/kendo/kendo.all.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const preloader = document.getElementById('preloader');
+
+            window.addEventListener('load', function () {
+                // Give it a tiny extra moment for Kendo UI to settle
+                setTimeout(() => {
+                    preloader.classList.add('preloader-hidden');
+                }, 800);
+            });
+        });
+
+        let isOpen = false;
+
+        function escapeHtml(text) {
+            return $("<div>").text(text || "").html();
+        }
+
+        function loadNotifications() {
+            $.get('/Admin/GetNotificationCount', function (data) {
+                const count = parseInt(data) || 0;
+                $("#notifCount").text(count > 0 ? count : "");
+            });
+        }
+
+        function loadNotificationList() {
+            $.get('/Admin/GetNotifications', function (data) {
+                let html = "";
+                if (!data || data.length === 0) {
+                    html = `<li style="text-align:center;color:#999;">No notifications</li>`;
+                } else {
+                    data.slice().reverse().forEach(item => {
+                        let message = item;
+                        let time = "";
+                        if (item.includes("||")) {
+                            const parts = item.split("||");
+                            message = parts[0];
+                            time = parts[1];
+                        }
+                        html += `
+                            <li class="notif-item">
+                                <div class="notif-text">${escapeHtml(message)}</div>
+                                ${time ? `<div class="notif-time">${time}</div>` : ""}
+                                <button class="mark-btn mark-done" data-message="${encodeURIComponent(item)}">Mark as Done</button>
+                            </li>`;
+                    });
+                }
+                $("#notifList").html(html);
+            });
+        }
+
+        $("#notifBell").click(function () {
+            isOpen = !isOpen;
+            if (isOpen) {
+                $("#notifBox").fadeIn(150);
+                loadNotificationList();
+            } else {
+                $("#notifBox").fadeOut(150);
+            }
+        });
+
+        function clearNotifications() {
+            $.post('/Admin/ClearNotifications', function () {
+                $("#notifList").html(`<li>No notifications</li>`);
+                $("#notifCount").text("");
+                $("#notifBox").fadeOut(150);
+                isOpen = false;
+            });
+        }
+
+        $(document).on("click", ".mark-done", function () {
+            const message = decodeURIComponent($(this).data("message"));
+            const $item = $(this).closest("li");
+            $item.fadeOut(200, function () {
+                $(this).remove();
+                let count = parseInt($("#notifCount").text()) || 0;
+                $("#notifCount").text(Math.max(count - 1, 0) || "");
+            });
+            $.post('/Admin/RemoveNotification', { message: message });
+        });
+
+        $(document).click(function (e) {
+            if (isOpen && !$(e.target).closest("#notifBox").length && !$(e.target).closest("#notifBell").length) {
+                $("#notifBox").fadeOut(150);
+                isOpen = false;
+            }
+        });
+
+        setInterval(loadNotifications, 3000);
+        loadNotifications();
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

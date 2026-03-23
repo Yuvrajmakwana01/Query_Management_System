@@ -1,0 +1,247 @@
+﻿@{
+    Layout = "../Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Employee Management";
+}
+
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    /* Premium Header */
+    .page-header {
+        background: var(--primary-gradient);
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        color: white;
+        box-shadow: 0 10px 20px rgba(118, 75, 162, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -10%;
+        width: 300px;
+        height: 300px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+    }
+
+    /* Grid Container */
+    .grid-container {
+        background: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #edf2f7;
+    }
+
+    /* Custom Kendo Grid Styling */
+    .k-grid {
+        border: none !important;
+        font-family: 'Inter', sans-serif;
+    }
+
+    .k-grid-header {
+        background: #f8f9fa !important;
+        border-bottom: 2px solid #edf2f7 !important;
+    }
+
+    .k-grid-header th.k-header {
+        font-weight: 700 !important;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        color: #718096 !important;
+        padding: 15px !important;
+    }
+
+    .k-master-row {
+        transition: background 0.2s;
+    }
+
+    .k-master-row:hover {
+        background-color: #fdfdff !important;
+    }
+
+    /* UI Components */
+    .emp-avatar {
+        width: 35px;
+        height: 35px;
+        background: #e2e8f0;
+        color: #764ba2;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-weight: bold;
+        margin-right: 12px;
+    }
+
+    .company-badge {
+        background: #f0f4ff;
+        color: #5a67d8;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .action-btn-delete {
+        border-radius: 8px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .action-btn-delete:hover {
+        background-color: #e53e3e !important;
+        box-shadow: 0 4px 12px rgba(229, 62, 62, 0.2);
+    }
+</style>
+
+<div class="container-fluid mt-4 px-4">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1 class="h2 fw-bold mb-1">Employee Directory</h1>
+            <p class="mb-0 opacity-75">Manage organizational access and employee associations</p>
+        </div>
+        <div class="d-none d-md-block">
+            <i class="k-icon k-i-user k-i-xlarge opacity-50" style="font-size: 3rem;"></i>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <div id="grid"></div>
+    </div>
+    <br><br>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#grid").kendoGrid({
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: '@Url.Action("GetAllEmployeeData", "Admin")',
+                            type: "GET",
+                            dataType: "json"
+                        }
+                    },
+                    schema: {
+                        model: {
+                            id: "c_EmpId",
+                            fields: {
+                                c_EmpId: { type: "number" },
+                                c_EmpName: { type: "string" },
+                                c_CompanyName: { type: "string" },
+                                c_Email: { type: "string" }
+                            }
+                        }
+                    },
+                    pageSize: 10
+                },
+                pageable: {
+                    buttonCount: 5,
+                    refresh: true
+                },
+                sortable: true,
+                filterable: {
+                    mode: "menu"
+                },
+                noRecords: true,
+                height: 400,
+                columns: [
+                    {
+                        field: "c_EmpId",
+                        title: "ID",
+                        width: 80,
+                        // Escaped the # here: \\#a0aec0
+                        attributes: { style: "font-weight: 600; color: \\#a0aec0;" }
+                    },
+                    {
+                        field: "c_EmpName",
+                        title: "Employee",
+                        template: function (dataItem) {
+                            const initials = dataItem.c_EmpName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                            return `<div class='d-flex align-items-center'>
+                            <div class='emp-avatar'>${initials}</div>
+                            <div class='fw-bold text-dark'>${dataItem.c_EmpName}</div>
+                        </div>`;
+                        }
+                    },
+                    {
+                        field: "c_CompanyName",
+                        title: "Organization",
+                        template: "<span class='company-badge'><i class='k-icon k-i-marker-pin-target sm'></i> #: c_CompanyName #</span>"
+                    },
+                    {
+                        field: "c_Email",
+                        title: "Email Address",
+                        // Escaped the # here: \\#764ba2
+                        template: "<a class='text-decoration-none' style='color: \\#764ba2;' href='mailto:#:c_Email#'>#:c_Email#</a>"
+                    },
+                    {
+                        title: "Operations",
+                        width: 120,
+                        // Ensure parameters are passed correctly in the template
+                        template: `<button class="k-button k-button-md k-rounded-md k-button-solid-error action-btn-delete"
+                               onclick="deleteEmployee(#=c_EmpId#, '#:c_EmpName#')">
+                            <span class="k-icon k-i-trash"></span> 
+                        </button>`
+                    }
+                ]
+            });
+        });
+
+        function deleteEmployee(id, name) {
+            Swal.fire({
+                title: 'Remove Employee?',
+                text: `Are you sure you want to delete ${name}? This action cannot be undone.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e53e3e',
+                cancelButtonColor: '#718096',
+                confirmButtonText: 'Yes, Delete',
+                cancelButtonText: 'Keep it',
+                background: '#ffffff',
+                borderRadius: '15px'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Show loading state
+                    Swal.fire({
+                        title: 'Processing...',
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+
+                    $.ajax({
+                        url: '/Admin/DeleteEmployee/' + id,
+                        type: 'POST',
+                        success: function (res) {
+                            if (res.success) {
+                                Swal.fire({
+                                    title: 'Deleted!',
+                                    text: 'Employee record has been removed.',
+                                    icon: 'success',
+                                    confirmButtonColor: '#764ba2'
+                                });
+                                $("#grid").data("kendoGrid").dataSource.read();
+                            } else {
+                                Swal.fire('Error', res.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Error', 'Communication with server failed.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}

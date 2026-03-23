@@ -19,5 +19,7 @@ namespace Repository.Interfaces
 
 
         Task<Dictionary<string, int>> GetEmployeeDashboardMetrics(int empId);
+
+        Task<t_Query> GetQueryById(int id);
     }
 }

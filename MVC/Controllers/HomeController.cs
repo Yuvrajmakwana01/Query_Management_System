@@ -23,6 +23,8 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult About1() => View("~/Views/About/About1.cshtml");
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

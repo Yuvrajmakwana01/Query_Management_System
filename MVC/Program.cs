@@ -1,3 +1,5 @@
+using Elastic.Clients.Elasticsearch;
+using Elastic.Transport;
 using Npgsql;
 using Repository.Implementations;
 using Repository.Interfaces;
@@ -8,14 +10,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+// builder.Services.AddSignalR(); // ✅ REQUIRED
+
 
 builder.Services.AddScoped<IAdminInterface, AdminRepository>();
 builder.Services.AddScoped<IAccountInterface,AccountRepository>();
 builder.Services.AddScoped<IEmployeeInterface,EmployeeRepository>();
 builder.Services.AddScoped<IUserInterface, UserRepository>();
 builder.Services.AddScoped<IQueryInterface, QueryRepository>();
+
+
+builder.Services.AddScoped<RabbitService>();
 // Custom Redis service
 builder.Services.AddSingleton<RedisServices>();
+
+builder.Services.AddScoped<ElasticSearchServices>();
+
+builder.Services.AddScoped<EmailServices>();
+
 
 
 builder.Services.AddScoped<NpgsqlConnection>(conn =>
@@ -24,6 +36,16 @@ builder.Services.AddScoped<NpgsqlConnection>(conn =>
     return new NpgsqlConnection(connectionString);
 });
 
+
+// builder.Services.AddSingleton<ElasticsearchClient>(sp =>
+// {
+//     var settings = new ElasticsearchClientSettings(new Uri("http://localhost:9200"))
+//         .Authentication(new BasicAuthentication("elastic", "8MEkfjWSG8w=wefTi373"));
+
+//     return new ElasticsearchClient(settings);
+// });
+
+// builder.Services.AddScoped<ElasticSearchServices>();
 
 // Redis connection
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -61,6 +83,14 @@ builder.Services.AddSession(options =>
 });
 
 var app = builder.Build();
+
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var elastic = scope.ServiceProvider.GetRequiredService<ElasticSearchServices>();
+    await elastic.CreateIndexAsync(); //  IMPORTANT
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -114,5 +144,6 @@ app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 
 app.Run();

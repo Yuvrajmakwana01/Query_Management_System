@@ -1,143 +1,510 @@
+@* @{
+
+    ViewData["Title"] = "Register";
+
+}
+
 @model Repository.Models.t_Registration
 
 <style>
-    body {
-        background-color: #f3f5f7;
-        font-family: 'Segoe UI', sans-serif;
+    .split-screen {
+        display: flex;
+        flex-wrap: wrap;
+        min-height: 100vh;
+
     }
 
-    .registration-wrapper {
-        max-width: 600px;
-        margin: 40px auto;
+    /* 2. Left Side: Hero Section */
+    .hero-side {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%),
+            url('https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&w=1000&q=80');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 10%;
+        transition: all 0.5s ease;
+        border-radius: 50px 5px 5px 5px;
+
     }
 
-    .k-card {
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        background: white;
-        border: none;
-    }
-
-    .form-title {
-        color: #3f51b5;
-        font-weight: 600;
-        margin-bottom: 25px;
-        text-align: center;
-    }
-
-    .field-container {
+    .hero-content h1 {
+        font-weight: 800;
+        font-size: 3rem;
         margin-bottom: 20px;
+        line-height: 1.2;
     }
 
+    .hero-content p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        line-height: 1.6;
+        max-width: 500px;
+    }
+
+    .feature-list {
+        margin-top: 40px;
+        list-style: none;
+        padding: 0;
+    }
+
+    .feature-list li {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        font-weight: 500;
+    }
+
+    .feature-list i {
+        margin-right: 15px;
+        color: #48bb78;
+        font-size: 1.2rem;
+    }
+
+    /* 3. Right Side: Form Section */
+    .form-side {
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        border-radius: 5px 5px 50px 5px;
+
+
+    }
+
+    .form-container {
+        width: 100%;
+        max-width: 480px;
+        background: white;
+        padding: 40px;
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Kendo Customization */
     .k-label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
-        color: #444;
+        font-weight: 600 !important;
+        color: #4a5568 !important;
+        margin-bottom: 6px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .k-textbox,
+    .k-dropdown {
+        width: 100% !important;
+        border-radius: 5px !important;
+        margin-bottom: 5px;
+
+
     }
 
     #submitBtn {
         width: 100%;
-        height: 45px;
-        background-color: #4554a7;
-        color: white;
-        font-weight: 600;
+        height: 50px;
+        font-weight: 700;
+        border-radius: 8px;
+        margin-top: 20px;
+        color: whitesmoke;
+        background: #667eea;
+        border: none;
+        transition: transform 0.2s;
     }
 
-    .text-danger {
-        font-size: 13px;
+    #submitBtn:hover {
+        transform: translateY(-2px);
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 991px) {
+        .hero-side {
+            padding: 60px 20px;
+            text-align: center;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 2.2rem;
+        }
     }
 </style>
 
-<div class="registration-wrapper">
-    <div class="k-card">
+<div class="container-fluid p-0">
+    <div class="row g-0 split-screen">
 
-        <h2 class="form-title">Account Registration</h2>
+        <div class="col-lg-6 hero-side d-none d-lg-flex">
+            <div class="hero-content">
+                <div class="mb-4">
+                    <span class="badge bg-light text-success px-3 py-2 rounded-pill fw-bold">SolvePoint Now Live</span>
+                </div>
+                <h1>Simplify Your <br />Query Workflow.</h1>
+                <p>Join thousands of professionals managing their enterprise queries.</p>
 
-        <form asp-action="Register" method="post" id="registrationForm">
-
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="field-container">
-                <label class="k-label" asp-for="c_CompanyName">Company Name</label>
-                <input asp-for="c_CompanyName" id="companyName" style="width:100%" />
-                <span asp-validation-for="c_CompanyName" class="text-danger"></span>
+                <ul class="feature-list">
+                    <li><i class="k-icon k-i-check-outline"></i> Real-time Redis Notifications</li>
+                    <li><i class="k-icon k-i-check-outline"></i> Elasticsearch Powered Search</li>
+                    <li><i class="k-icon k-i-check-outline"></i> Advanced Admin Dashboard</li>
+                </ul>
             </div>
+        </div>
 
-            <div class="field-container">
-                <label class="k-label" asp-for="c_EmpName">Name</label>
-                <input asp-for="c_EmpName" id="empName" style="width:100%" />
-                <span asp-validation-for="c_EmpName" class="text-danger"></span>
+        <div class="col-lg-6 col-md-12 form-side">
+            <div class="form-container">
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-dark">Get Started</h2>
+                    <p class="text-muted">Create your free account in seconds</p>
+                </div>
+
+                <form asp-action="Register" method="post" id="registrationForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="mb-3">
+                        <label class="k-label" asp-for="c_CompanyName">Company Name</label>
+                        <input asp-for="c_CompanyName" id="companyName" />
+                        <span asp-validation-for="c_CompanyName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="k-label" asp-for="c_EmpName">Your Name</label>
+                        <input asp-for="c_EmpName" id="empName" />
+                        <span asp-validation-for="c_EmpName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="k-label" asp-for="c_EmailId">Email Address</label>
+                        <input asp-for="c_EmailId" id="email" />
+                        <span asp-validation-for="c_EmailId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-7 mb-3">
+                            <label class="k-label" asp-for="c_Password">Password</label>
+                            <input asp-for="c_Password" id="password" type="password" />
+                            <span asp-validation-for="c_Password" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-5 mb-3">
+                            <label class="k-label" asp-for="c_Role">Role</label>
+                            <select asp-for="c_Role" id="roleDropdown">
+                                <option value="">Select...</option>
+                                <option value="User">User</option>
+                                <option value="Employee">Employee</option>
+                            </select>
+                            <span asp-validation-for="c_Role" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submitBtn" style="font-size: 16px;">Create Account</button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="small text-muted">Already have an account? <a href="Account/Login"
+                            class="text-primary fw-bold text-decoration-none">Log in</a></p>
+                </div>
             </div>
-
-            <div class="field-container">
-                <label class="k-label" asp-for="c_EmailId">Email</label>
-                <input asp-for="c_EmailId" id="email" style="width:100%" />
-                <span asp-validation-for="c_EmailId" class="text-danger"></span>
-            </div>
-
-            <div class="field-container">
-                <label class="k-label" asp-for="c_Password">Password</label>
-                <input asp-for="c_Password" id="password" type="password" style="width:100%" />
-                <span asp-validation-for="c_Password" class="text-danger"></span>
-            </div>
-
-            <div class="field-container">
-                <label class="k-label" asp-for="c_Role">Role</label>
-                <select asp-for="c_Role" id="roleDropdown" style="width:95%">
-                    <option value="">Select Role</option>
-                    <option value="User">User</option>
-                    <option value="Employee">Employee</option>
-                </select>
-                <span asp-validation-for="c_Role" class="text-danger"></span>
-            </div>
-
-            <button type="submit" id="submitBtn">Create Account</button>
-
-        </form>
+        </div>
 
     </div>
 </div>
 
 @section Scripts {
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default-v2.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
 
-<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css"/>
-<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default.min.css"/>
+    <script>
+        $(document).ready(function () {
+            $("#companyName").kendoTextBox({ placeholder: "Company Ltd.", prefixOptions: { icon: "briefcase" } });
+            $("#empName").kendoTextBox({ placeholder: "John Doe", prefixOptions: { icon: "user" } });
+            $("#email").kendoTextBox({ placeholder: "john@example.com", prefixOptions: { icon: "email" } });
+            $("#password").kendoTextBox({ placeholder: "Min. 8 chars", prefixOptions: { icon: "lock" } });
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+            $("#roleDropdown").kendoDropDownList();
 
-<partial name="_ValidationScriptsPartial" />
+            $("#submitBtn").kendoButton({
+                themeColor: "primary"
+            });
+        });
+    </script>
+} *@
 
-<script>
+@{
+    ViewData["Title"] = "Register";
+    Layout = "_Layout";
+}
 
-$(document).ready(function(){
+@model Repository.Models.t_Registration
 
-    $("#companyName").kendoTextBox({
-        placeholder:"Enter company name"
-    });
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-    $("#empName").kendoTextBox({
-        placeholder:"Enter employee name"
-    });
+<style>
+    :root {
+        --sp-primary: #4f46e5;
+        --sp-primary-hover: #4338ca;
+        --glass-bg: rgba(255, 255, 255, 0.8);
+        --glass-border: rgba(255, 255, 255, 0.3);
+    }
 
-    $("#email").kendoTextBox({
-        placeholder:"Enter email address"
-    });
+    body,
+    html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        height: 100%;
+        /* Changed from 100vh to 100% */
+        overflow-x: hidden;
+        /* Prevent horizontal scroll */
+        background-color: #f0f2f5;
+    }
 
-    $("#password").kendoTextBox({
-        placeholder:"Enter password"
-    });
+    /* --- FULLSCREEN INTERACTIVE BACKGROUND --- */
+    .spline-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1;
+    }
 
-    $("#roleDropdown").kendoDropDownList();
+    .spline-bg iframe {
+        width: 100%;
+        height: 108%;
+        /* Clips the Spline logo at the bottom */
+        border: none;
+    }
 
-    $("#submitBtn").kendoButton({
-        themeColor:"primary"
-    });
+    /* --- LEFT SIDEBAR CONTENT --- */
+    .content-overlay {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        /* Minimum height of screen */
+        display: flex;
+        align-items: center;
+        /* Center vertically in the available space */
+        justify-content: flex-start;
+        padding: 100px 0 60px 5%;
+        /* 100px top padding clears the navbar */
+        pointer-events: none;
+        overflow-y: auto;
+        /* Allows the form to scroll on small screens */
+    }
 
-});
+    .form-card {
+        pointer-events: all;
+        width: 100%;
+        max-width: 460px;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid var(--glass-border);
+        border-radius: 28px;
+        padding: 35px 40px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        margin-bottom: 20px;
+        /* Extra space at bottom */
+    }
 
-</script>
+    @@keyframes slideInUpLeft {
+        from {
+            opacity: 0;
+            transform: translate(-60px, 20px);
+        }
 
+        to {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+    }
+
+
+    .mb-3 {
+        margin-bottom: 0.8rem !important;
+    }
+
+    .form-header {
+        margin-bottom: 1.5rem !important;
+    }
+
+    /* Kendo & Form Styling */
+    .form-header h2 {
+        font-weight: 800;
+        color: #1e293b;
+        letter-spacing: -0.02em;
+    }
+
+    .k-label {
+        font-weight: 700 !important;
+        color: #475569 !important;
+        margin-bottom: 8px !important;
+        font-size: 0.8rem !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .k-textbox,
+    .k-dropdown {
+        width: 100% !important;
+        border-radius: 12px !important;
+        background: rgba(255, 255, 255, 0.6) !important;
+        border: 1px solid rgba(0, 0, 0, 0.05) !important;
+        transition: all 0.2s;
+    }
+
+    .k-textbox:focus-within {
+        border-color: var(--sp-primary) !important;
+        background: white !important;
+        box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1) !important;
+    }
+
+    #submitBtn {
+        width: 100%;
+        height: 55px;
+        background: var(--sp-primary) !important;
+        border: none !important;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 1rem;
+        color: white;
+        margin-top: 15px;
+        transition: all 0.3s;
+        box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+    }
+
+    #submitBtn:hover {
+        background: var(--sp-primary-hover) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.4);
+    }
+
+    .login-link {
+        color: var(--sp-primary);
+        font-weight: 700;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .login-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Floating Logo */
+    .brand-tag {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        z-index: 20;
+        background: white;
+        padding: 10px 10px;
+        border-radius: 100px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        font-weight: 800;
+        color: var(--sp-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    @@media (max-width: 992px) {
+        .content-overlay {
+            padding: 100px 20px 40px 20px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .form-card {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<div class="spline-bg">
+    <iframe src='https://my.spline.design/interactiveaiwebsite-n7WQ3o0skNRNslwJzjRwRZ9q/' frameborder='0' width='100%'
+        height='100%'></iframe>
+
+
+</div>
+
+
+
+<div class="content-overlay">
+    <div class="form-card">
+        <div class="form-header mb-4">
+            <h2 class="mb-1">Create Account</h2>
+            <p class="text-muted small">Step into the future of query management.</p>
+        </div>
+
+        <form asp-action="Register" method="post" id="registrationForm">
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+            <div class="mb-3">
+                <label class="k-label" asp-for="c_CompanyName"><i class="bi bi-building me-1"></i> Company</label>
+                <input asp-for="c_CompanyName" id="companyName" />
+                <span asp-validation-for="c_CompanyName" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="k-label" asp-for="c_EmpName"><i class="bi bi-person me-1"></i> Full Name</label>
+                <input asp-for="c_EmpName" id="empName" />
+                <span asp-validation-for="c_EmpName" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="k-label" asp-for="c_EmailId"><i class="bi bi-envelope me-1"></i> Business Email</label>
+                <input asp-for="c_EmailId" id="email" />
+                <span asp-validation-for="c_EmailId" class="text-danger small"></span>
+            </div>
+
+            <div class="row g-2">
+                <div class="col-md-7 mb-3">
+                    <label class="k-label" asp-for="c_Password">Password</label>
+                    <input asp-for="c_Password" id="password" type="password" />
+                    <span asp-validation-for="c_Password" class="text-danger small"></span>
+                </div>
+                <div class="col-5 mb-3">
+                    <label class="k-label" asp-for="c_Role"><i class="bi bi-person-badge me-1"></i> Role</label>
+                    <select asp-for="c_Role" id="roleDropdown">
+                        <option value="User">User</option>
+                        <option value="Employee">Employee</option>
+                    </select>
+                    <span asp-validation-for="c_Role" class="text-danger small"></span>
+                </div>
+            </div>
+
+            <button type="submit" id="submitBtn">JOIN NOW</button>
+        </form>
+
+        <div class="text-center mt-4 pt-2">
+            <p class="small text-muted mb-0">
+                Already using SolvePoint?
+                <a href="@Url.Action("Login", "Account")" class="login-link">Sign In</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.default-v2.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            // Keep existing initialization logic
+            $("#companyName").kendoTextBox({ placeholder: "SolvePoint Ltd." });
+            $("#empName").kendoTextBox({ placeholder: "Enter your full name" });
+            $("#email").kendoTextBox({ placeholder: "name@company.com" });
+            $("#password").kendoTextBox({ placeholder: "Create a password" });
+            $("#roleDropdown").kendoDropDownList();
+            $("#submitBtn").kendoButton();
+        });
+    </script>
 }

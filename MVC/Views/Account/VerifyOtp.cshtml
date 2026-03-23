@@ -1,0 +1,298 @@
+﻿@{
+Layout = "../Shared/_ForgotPasswordLayout.cshtml";
+ViewData["Title"] = "Verify OTP";
+}
+
+<style>
+    .step-progress {
+        display: flex; align-items: center; margin-bottom: 32px;
+    }
+    .sp-item {
+        display: flex; flex-direction: column; align-items: center;
+        flex: 1; position: relative;
+    }
+    .sp-item:not(:last-child)::after {
+        content: ''; position: absolute;
+        top: 14px; left: 55%; right: -50%;
+        height: 2px; z-index: 0;
+    }
+    .sp-item:nth-child(1)::after { background: #1cc88a; }
+    .sp-item:nth-child(2)::after { background: #e5e7eb; }
+
+    .sp-circle {
+        width: 28px; height: 28px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 11px; font-weight: 700;
+        position: relative; z-index: 1;
+        background: #e5e7eb; color: #aaa;
+    }
+    .sp-item.done   .sp-circle { background: #1cc88a; color: #fff; }
+    .sp-item.active .sp-circle { background: #4e73df; color: #fff; box-shadow: 0 0 0 4px #e8edff; }
+    .sp-label { font-size: 11px; color: #aaa; margin-top: 5px; font-weight: 600; }
+    .sp-item.done   .sp-label { color: #1cc88a; }
+    .sp-item.active .sp-label { color: #4e73df; }
+
+    .step-tag {
+        display: inline-block; font-size: 11px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .07em;
+        color: #4e73df; background: #e8edff;
+        padding: 4px 12px; border-radius: 20px; margin-bottom: 12px;
+    }
+    .step-hdr h3 { font-size: 24px; font-weight: 800; color: #1a1a2e; margin: 0 0 8px; letter-spacing: -.4px; }
+    .step-hdr p  { font-size: 14px; color: #6b7280; margin: 0 0 24px; line-height: 1.6; }
+
+    /* OTP boxes */
+    .otp-row { display: flex; gap: 10px; justify-content: center; margin: 6px 0 20px; }
+    .otp-box {
+        width: 52px; height: 60px;
+        text-align: center; font-size: 26px; font-weight: 800;
+        border: 2px solid #e5e7eb; border-radius: 12px;
+        color: #4e73df; outline: none;
+        transition: border-color .2s, box-shadow .2s;
+        font-family: 'Plus Jakarta Sans', monospace;
+    }
+    .otp-box:focus { border-color: #4e73df; box-shadow: 0 0 0 4px #e8edff; }
+    .otp-box.filled { border-color: #1cc88a; background: #f0fbf6; }
+
+    /* Timer */
+    .timer-wrap {
+        display: flex; align-items: center; justify-content: space-between;
+        background: #f9fafb; border: 1px solid #e5e7eb;
+        border-radius: 10px; padding: 10px 16px;
+        margin-bottom: 20px; font-size: 13px;
+    }
+    .timer-wrap .t-label { color: #6b7280; font-weight: 600; }
+    .timer-wrap .t-count { color: #e74a3b; font-weight: 800; font-size: 15px; font-variant-numeric: tabular-nums; }
+
+    .btn-go {
+        width: 100%;
+        background: linear-gradient(135deg, #4e73df, #6f42c1);
+        color: #fff; border: none;
+        font-size: 15px; font-weight: 700;
+        padding: 13px; border-radius: 10px; cursor: pointer;
+        transition: opacity .15s, transform .12s;
+    }
+    .btn-go:hover  { opacity: .9; transform: translateY(-1px); }
+    .btn-go:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    .resend-row { text-align: center; font-size: 13px; color: #9ca3af; margin-top: 16px; display: none; }
+    .resend-row a { color: #4e73df; font-weight: 600; text-decoration: none; }
+    .resend-row a:hover { text-decoration: underline; }
+
+    .alt-link { text-align: center; font-size: 13px; color: #9ca3af; margin-top: 12px; }
+    .alt-link a { color: #6b7280; font-weight: 600; text-decoration: none; }
+    .alt-link a:hover { color: #4e73df; }
+
+    #alertBox { display: none; border-radius: 10px; font-size: 14px; margin-top: 14px; padding: 12px 16px; }
+</style>
+
+<!-- Step progress -->
+<div class="step-progress">
+    <div class="sp-item done">
+        <div class="sp-circle">✓</div>
+        <div class="sp-label">Email</div>
+    </div>
+    <div class="sp-item active">
+        <div class="sp-circle">2</div>
+        <div class="sp-label">OTP</div>
+    </div>
+    <div class="sp-item">
+        <div class="sp-circle">3</div>
+        <div class="sp-label">Reset</div>
+    </div>
+</div>
+
+<!-- Header -->
+<div class="step-hdr">
+    <div class="step-tag">Step 2 of 3</div>
+    <h3>Enter OTP</h3>
+    <p id="emailHint">A 6-digit OTP has been sent to your email.</p>
+</div>
+
+<!-- 6 OTP boxes -->
+<div class="otp-row">
+    <input class="otp-box" maxlength="1" type="text" inputmode="numeric" />
+    <input class="otp-box" maxlength="1" type="text" inputmode="numeric" />
+    <input class="otp-box" maxlength="1" type="text" inputmode="numeric" />
+    <input class="otp-box" maxlength="1" type="text" inputmode="numeric" />
+    <input class="otp-box" maxlength="1" type="text" inputmode="numeric" />
+    <input class="otp-box" maxlength="1" type="text" inputmode="numeric" />
+</div>
+
+<!-- Timer -->
+<div class="timer-wrap">
+    <span class="t-label">OTP expires in:</span>
+    <span class="t-count" id="countdown">15:00</span>
+</div>
+
+<div id="alertBox" class="alert"></div>
+
+<button id="btnVerify" class="btn-go" type="button">Verify OTP</button>
+
+<div class="resend-row" id="resendRow">
+    OTP expired? <a href="@Url.Action("ForgotPassword","Account")">🔁  Resend OTP</a>
+</div>
+
+<div class="alt-link">
+    <a href="@Url.Action("ForgotPassword","Account")">← Go back</a>
+</div>
+
+@section Scripts {
+
+<script>
+$(document).ready(function () {
+
+    // ✅ FIXED EMAIL MASKING
+    var email = sessionStorage.getItem("resetEmail") || "";
+    if (email) {
+        var parts = email.split("@@"); // ✅ FIX
+        var masked = parts[0].slice(0, 2) + "***@@" + (parts[1] || "");
+        $("#emailHint").text("OTP sent to: " + masked);
+    }
+
+    // OTP input logic
+    $(".otp-box").on("input", function () {
+        $(this).val($(this).val().replace(/[^0-9]/g, ""));
+        if ($(this).val()) {
+            $(this).addClass("filled");
+            $(this).next(".otp-box").focus();
+        } else {
+            $(this).removeClass("filled");
+        }
+    });
+
+    $(".otp-box").on("keydown", function (e) {
+        if (e.key === "Backspace" && !$(this).val()) {
+            $(this).prev(".otp-box").val("").removeClass("filled").focus();
+        }
+    });
+
+    // Paste support
+    $(".otp-box").first().on("paste", function (e) {
+        e.preventDefault();
+        var d = (e.originalEvent.clipboardData || window.clipboardData)
+                    .getData("text").replace(/[^0-9]/g,"").slice(0,6);
+
+        $(".otp-box").each(function (i) {
+            if (d[i]) $(this).val(d[i]).addClass("filled");
+        });
+
+        $(".otp-box").eq(d.length - 1).focus();
+    });
+
+    // ⏱ TIMER
+    var secs = 900;
+    var timer = setInterval(function () {
+        secs--;
+
+        if (secs <= 0) {
+            clearInterval(timer);
+            $("#countdown").text("00:00");
+            $("#btnVerify").prop("disabled", true);
+            $("#resendRow").show();
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'OTP Expired!',
+                text: 'Please request a new OTP.',
+                confirmButtonColor: '#f6c23e'
+            }).then(function () {
+                window.location.href = '@Url.Action("ForgotPassword","Account")';
+            });
+            return;
+        }
+
+        var m = Math.floor(secs / 60), s = secs % 60;
+        $("#countdown").text(
+            (m<10?"0":"")+m+":"+(s<10?"0":"")+s
+        );
+
+    }, 1000);
+
+    // VERIFY
+    $("#btnVerify").click(function () {
+
+        var otp = $(".otp-box").map(function () {
+            return $(this).val();
+        }).get().join("");
+
+        if (otp.length < 6) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Incomplete OTP',
+                text: 'Enter full 6-digit OTP'
+            });
+            return;
+        }
+
+        if (!email) {
+            window.location.href = '@Url.Action("ForgotPassword","Account")';
+            return;
+        }
+
+        $("#btnVerify").prop("disabled", true).text("Verifying...");
+
+        Swal.fire({
+            title: 'Verifying OTP...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        $.ajax({
+            url: '@Url.Action("VerifyOtp","Account")',
+            type: 'POST',
+            data: { email: email, otp: otp },
+
+            success: function (res) {
+
+                Swal.close(); // ✅ FIX
+
+                if (res.success) {
+                    clearInterval(timer);
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'OTP Verified!',
+                        confirmButtonColor: '#1cc88a'
+                    }).then(function () {
+                        window.location.href = '@Url.Action("ResetPassword","Account")';
+                    });
+
+                } else {
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid OTP',
+                        text: res.message
+                    });
+
+                    $(".otp-box").val("").removeClass("filled").first().focus();
+
+                    $("#btnVerify").prop("disabled", false).text("Verify OTP"); // ✅ FIX
+                }
+            },
+
+            error: function () {
+
+                Swal.close(); // ✅ FIX
+
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Server Error',
+                    text: 'Try again'
+                });
+
+                $("#btnVerify").prop("disabled", false).text("Verify OTP"); // ✅ FIX
+            }
+        });
+    });
+
+    // ✅ ENTER KEY SUPPORT
+    $(document).keypress(function (e) {
+        if (e.which == 13) $("#btnVerify").click();
+    });
+
+});
+</script>
+
+}

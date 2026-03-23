@@ -89,7 +89,7 @@ namespace Repository.Implementations
                             // c_QueryDate = DateOnly.FromDateTime(Convert.ToDateTime(reader["c_querydate"])),
                             c_QueryDate = (DateOnly)reader["c_querydate"],
                             // c_EmpId = reader.GetInt32(5),
-                           c_EmpId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5),
+                            c_EmpId = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5),
                             c_Status = reader.GetString(6),
                             // c_Comment = reader.GetString(7),
                             c_Comment = reader.IsDBNull(7) ? null : reader.GetString(7)
@@ -253,6 +253,68 @@ namespace Repository.Implementations
             }
         }
 
+        public async Task<List<Dictionary<string, object>>> GetAllEmployee()
+        {
+            try
+            {
+                var qry = @"SELECT c_empid, c_empname, c_companyname, c_email FROM t_employee WHERE c_role = 'Employee'";
 
+                using (var cmd = new NpgsqlCommand(qry, _conn))
+                {
+                    var list = new List<Dictionary<string, object>>();
+
+                    if (_conn.State != System.Data.ConnectionState.Open)
+                        await _conn.OpenAsync();
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            var row = new Dictionary<string, object>
+                            {
+                                ["c_EmpId"] = reader["c_empid"],
+                                ["c_EmpName"] = reader["c_empname"],
+                                ["c_CompanyName"] = reader["c_companyname"],
+                                ["c_Email"] = reader["c_email"]
+                            };
+
+                            list.Add(row);
+                        }
+                    }
+
+                    await _conn.CloseAsync();
+                    return list;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error While Getting Employees..." + ex.Message);
+
+                if (_conn.State == System.Data.ConnectionState.Open)
+                    await _conn.CloseAsync();
+
+                return new List<Dictionary<string, object>>(); // NEVER return null
+            }
+        }
+
+        public async Task DeleteEmployee(int id)
+        {
+            try
+            {
+                await _conn.CloseAsync();
+                await _conn.OpenAsync();
+
+                var qry = "DELETE FROM t_employee WHERE c_empid = @id";
+
+                using var cmd = new NpgsqlCommand(qry, _conn);
+                cmd.Parameters.AddWithValue("@id", id);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            finally
+            {
+                await _conn.CloseAsync();
+            }
+        }
     }
 }
