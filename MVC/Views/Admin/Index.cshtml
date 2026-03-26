@@ -12,13 +12,27 @@
         --text-muted: #64748b;
     }
 
-    body { background-color: #f8fafc; font-family: 'Inter', system-ui, sans-serif; }
+    body {
+        background-color: #f8fafc;
+        font-family: 'Inter', system-ui, sans-serif;
+    }
 
-    .dashboard-wrapper { padding: 2rem; max-width: 1600px; margin: 0 auto; }
+    .dashboard-wrapper {
+        padding: 2rem;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
 
     /* Header Section */
-    .header-content { margin-bottom: 2rem; }
-    .header-content h2 { font-weight: 800; color: var(--text-main); letter-spacing: -0.025em; }
+    .header-content {
+        margin-bottom: 2rem;
+    }
+
+    .header-content h2 {
+        font-weight: 800;
+        color: var(--text-main);
+        letter-spacing: -0.025em;
+    }
 
     /* KPI Grid Layout */
     .kpi-grid {
@@ -40,7 +54,10 @@
         overflow: hidden;
     }
 
-    .premium-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+    .premium-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
 
     .icon-box {
         width: 56px;
@@ -54,13 +71,41 @@
         color: white;
     }
 
-    .bg-total { background: var(--primary-gradient); }
-    .bg-solved { background: var(--success-gradient); }
-    .bg-pending { background: var(--danger-gradient); }
+    .bg-total {
+        background: var(--primary-gradient);
+    }
 
-    .stat-info .label { font-size: 0.875rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; }
-    .stat-info .value { font-size: 1.875rem; font-weight: 700; color: var(--text-main); display: block; line-height: 1; margin: 0.5rem 0; }
-    .stat-info .trend { font-size: 0.75rem; padding: 2px 8px; border-radius: 99px; background: #f1f5f9; color: var(--text-muted); }
+    .bg-solved {
+        background: var(--success-gradient);
+    }
+
+    .bg-pending {
+        background: var(--danger-gradient);
+    }
+
+    .stat-info .label {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+
+    .stat-info .value {
+        font-size: 1.875rem;
+        font-weight: 700;
+        color: var(--text-main);
+        display: block;
+        line-height: 1;
+        margin: 0.5rem 0;
+    }
+
+    .stat-info .trend {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 99px;
+        background: #f1f5f9;
+        color: var(--text-muted);
+    }
 
     /* Chart Section */
     .content-grid {
@@ -70,7 +115,7 @@
         border-radius: 16px;
         padding: 2rem;
         border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 </style>
 
@@ -78,6 +123,15 @@
     <div class="header-content">
         <h2>Analytics Overview</h2>
         <p class="text-muted">Review your query resolution metrics and performance trends.</p>
+
+        @* <div style="position:absolute; top:20px; right:30px;">
+            <i class="k-icon k-i-bell" style="font-size:24px;"></i>
+            <span id="notifCount" style="position:absolute; top:-8px; right:-8px;
+                 background:red; color:white; border-radius:50%;
+                 padding:4px 8px; font-size:12px;">
+                0
+            </span>
+        </div> *@
     </div>
 
     <div class="kpi-grid">
@@ -114,82 +168,84 @@
     </div>
 </div>
 
-@section Scripts{
-<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css"/>
-<link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.edge-main.min.css"/>
+@section Scripts {
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.616/styles/kendo.edge-main.min.css" />
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.616/js/kendo.all.min.js"></script>
 
 
 
-<script>
-$(document).ready(function(){
+    <script>
+        $(document).ready(function () {
 
-    var dashboardData = new kendo.data.DataSource({
-        transport: {
-            read: { url: "/Admin/GetDashboardData", dataType: "json" }
-        },
-        schema: {
-            data: function(response) { return [response]; }
-        }
-    });
+            var dashboardData = new kendo.data.DataSource({
+                transport: {
+                    read: { url: "/Admin/GetDashboardData", dataType: "json" }
+                },
+                schema: {
+                    data: function (response) { return [response]; }
+                }
+            });
 
-    dashboardData.fetch(function(){
-        var data = this.data()[0];
+            dashboardData.fetch(function () {
+                var data = this.data()[0];
 
-        // Smooth Count Animation
-        animateCount("totalQueries", data.totalQueries);
-        animateCount("solvedQueries", data.solvedQuery);
-        animateCount("pendingQueries", data.pendingQueries);
+                // Smooth Count Animation
+                animateCount("totalQueries", data.totalQueries);
+                animateCount("solvedQueries", data.solvedQuery);
+                animateCount("pendingQueries", data.pendingQueries);
 
-        $("#todayQueries").text(data.totalTodayQueries);
-        $("#solvedToday").text(data.solvedTodayQueries);
-        $("#pendingToday").text(data.pendingTodayQueries);
+                $("#todayQueries").text(data.totalTodayQueries);
+                $("#solvedToday").text(data.solvedTodayQueries);
+                $("#pendingToday").text(data.pendingTodayQueries);
 
-        // Premium Chart Configuration
-        $("#chart").kendoChart({
-            title: { 
-                text: "RESOLUTION EFFICIENCY", 
-                font: "bold 14px Inter", 
-                color: "#64748b",
-                align: "left"
-            },
-            legend: { position: "right", labels: { font: "10px Inter" } },
-            seriesDefaults: {
-                type: "donut",
-                holeSize: 70,
-                overlay: { gradient: "none" }
-            },
-            series: [{
-                data: [
-                    { category: "Resolved", value: data.solvedQuery, color: "#10b981" },
-                    { category: "Pending", value: data.pendingQueries, color: "#f43f5e" }
-                ],
-                padding: 10
-            }],
-            tooltip: { 
-                visible: true, 
-                template: "#= category #: #= value # (#= kendo.format('{0:P1}', percentage) #)",
-                background: "#1e293b",
-                color: "#fff",
-                border: { width: 0 }
+                // Premium Chart Configuration
+                $("#chart").kendoChart({
+                    title: {
+                        text: "RESOLUTION EFFICIENCY",
+                        font: "bold 14px Inter",
+                        color: "#64748b",
+                        align: "left"
+                    },
+                    legend: { position: "right", labels: { font: "10px Inter" } },
+                    seriesDefaults: {
+                        type: "donut",
+                        holeSize: 70,
+                        overlay: { gradient: "none" }
+                    },
+                    series: [{
+                        data: [
+                            { category: "Resolved", value: data.solvedQuery, color: "#10b981" },
+                            { category: "Pending", value: data.pendingQueries, color: "#f43f5e" }
+                        ],
+                        padding: 10
+                    }],
+                    tooltip: {
+                        visible: true,
+                        template: "#= category #: #= value # (#= kendo.format('{0:P1}', percentage) #)",
+                        background: "#1e293b",
+                        color: "#fff",
+                        border: { width: 0 }
+                    }
+                });
+            });
+
+           
+
+            function animateCount(id, value) {
+                $({ countNum: 0 }).animate({ countNum: value }, {
+                    duration: 1500,
+                    easing: 'swing',
+                    step: function () {
+                        $("#" + id).text(Math.floor(this.countNum));
+                    },
+                    complete: function () {
+                        $("#" + id).text(this.countNum);
+                    }
+                });
             }
         });
-    });
-
-    function animateCount(id, value) {
-        $({ countNum: 0 }).animate({ countNum: value }, {
-            duration: 1500,
-            easing: 'swing',
-            step: function() {
-                $("#" + id).text(Math.floor(this.countNum));
-            },
-            complete: function() {
-                $("#" + id).text(this.countNum);
-            }
-        });
-    }
-});
-</script>
+    </script>
 }

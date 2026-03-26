@@ -1,0 +1,642 @@
+@* @{
+    ViewData["Title"] = "About Us | SolvePoint";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+<style>
+    :root {
+        --sp-primary: #4f46e5;
+        --sp-primary-hover: #4338ca;
+        --sp-bg: #f8fafc;
+        --glass-bg: rgba(255, 255, 255, 0.9);
+        --glass-border: rgba(255, 255, 255, 0.3);
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--sp-bg);
+        color: var(--text-main);
+    }
+
+    /* --- HERO SECTION --- */
+    .about-hero {
+        background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+        padding: 100px 24px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .about-hero h1 {
+        font-weight: 800;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        letter-spacing: -0.03em;
+        margin-bottom: 20px;
+    }
+
+    .about-hero p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 700px;
+        margin: 0 auto 30px;
+        line-height: 1.6;
+    }
+
+    /* --- SECTION STYLING --- */
+    .section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 80px 24px;
+    }
+
+    .section-label {
+        color: var(--sp-primary);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 0.8rem;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .section-title {
+        font-weight: 800;
+        font-size: 2.2rem;
+        margin-bottom: 40px;
+        letter-spacing: -0.01em;
+    }
+
+    /* --- STATS CARD --- */
+    .intro-visual {
+        background: white;
+        border-radius: 24px;
+        padding: 30px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .stat-box {
+        text-align: center;
+        padding: 20px;
+        border-radius: 16px;
+        background: #f1f5f9;
+        transition: transform 0.3s;
+    }
+
+    .stat-box:hover { transform: translateY(-5px); }
+
+    .stat-num {
+        display: block;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--sp-primary);
+    }
+
+    /* --- FEATURE CARDS --- */
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+    }
+
+    .feature-card {
+        background: white;
+        padding: 32px;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s;
+    }
+
+    .feature-card:hover {
+        border-color: var(--sp-primary);
+        box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.2);
+    }
+
+    .feature-icon {
+        font-size: 1.5rem;
+        width: 50px;
+        height: 50px;
+        background: #eef2ff;
+        color: var(--sp-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    /* --- TEAM CARDS --- */
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 24px;
+    }
+
+    .team-card {
+        background: white;
+        border-radius: 24px;
+        padding: 24px;
+        text-align: center;
+        border: 1px solid #f1f5f9;
+        transition: 0.3s;
+    }
+
+    .team-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+    }
+
+    .team-card img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 16px;
+        border: 4px solid #f1f5f9;
+    }
+
+    .member-name { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; }
+    .member-role { color: var(--text-muted); font-size: 0.85rem; font-weight: 500; }
+
+    /* --- CTA --- */
+    .cta-banner {
+        background: var(--text-main);
+        color: white;
+        padding: 60px 24px;
+        border-radius: 32px;
+        text-align: center;
+        margin: 40px 24px 80px;
+    }
+
+    .btn-sp {
+        background: var(--sp-primary);
+        color: white;
+        padding: 14px 32px;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        transition: 0.3s;
+    }
+
+    .btn-sp:hover { background: var(--sp-primary-hover); color: white; transform: translateY(-2px); }
+</style>
+
+<div class="about-hero">
+    <span class="badge bg-white text-primary rounded-pill px-3 py-2 mb-3 fw-bold small">QUERY MANAGEMENT EVOLVED</span>
+    <h1>Smarter Queries.<br/>Faster Resolutions.</h1>
+    <p>Empowering teams to track, manage, and resolve issues through a unified, intelligent dashboard.</p>
+    <a href="@Url.Action("Register", "User")" class="btn-sp">Get Started Now</a>
+</div>
+
+<div class="section">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+            <span class="section-label">Our Mission</span>
+            <h2 class="section-title">What is SolvePoint?</h2>
+            <p class="text-muted mb-4">SolvePoint is an enterprise-grade platform built using <b>ASP.NET Core 8</b>. We focus on bridging the gap between users and support teams using a clean repository architecture and real-time tracking.</p>
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="p-3 border rounded-3 bg-white">
+                        <i class="bi bi-shield-check text-primary h4"></i>
+                        <h6 class="mt-2 fw-bold">Secure Access</h6>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-3 border rounded-3 bg-white">
+                        <i class="bi bi-lightning-charge text-primary h4"></i>
+                        <h6 class="mt-2 fw-bold">Instant Alerts</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="intro-visual">
+                <div class="row g-3 text-center">
+                    <div class="col-6"><div class="stat-box"><span class="stat-num">100%</span><small>Visibility</small></div></div>
+                    <div class="col-6"><div class="stat-box"><span class="stat-num">24/7</span><small>Support</small></div></div>
+                    <div class="col-12 mt-3">
+                        <div class="stat-box bg-primary text-white">
+                            <span class="stat-num text-white">∞</span>
+                            <small>Scalable Solution</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white py-5">
+    <div class="section">
+        <span class="section-label">Capabilities</span>
+        <h2 class="section-title">Why Teams Choose Us</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-person-badge"></i></div>
+                <h5>Multi-Role Dashboards</h5>
+                <p class="text-muted small">Custom portals for both users and employees with specific action items.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-clock-history"></i></div>
+                <h5>Lifecycle Tracking</h5>
+                <p class="text-muted small">Full audit trails for every query from submission to final closure.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="bi bi-graph-up-arrow"></i></div>
+                <h5>Real-time Analytics</h5>
+                <p class="text-muted small">Visual insights into resolution times and team performance.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <span class="section-label">The Visionaries</span>
+    <h2 class="section-title">Meet Our Team</h2>
+    <div class="team-grid">
+        <div class="team-card"><img src="~/TeamMembersPic/Ankit_Sir.jpeg"><div class="member-name">Ankit Chhuhhar</div><div class="member-role">Frontend Lead</div></div>
+        <div class="team-card"><img src="~/TeamMembersPic/Deep_Sir.jpeg"><div class="member-name">Deep Pokiya</div><div class="member-role">Backend Lead</div></div>
+        <div class="team-card"><img src="~/TeamMembersPic/Meet_Sir.jpeg"><div class="member-name">Meet Patel</div><div class="member-role">UI/UX Designer</div></div>
+        <div class="team-card"><img src="~/TeamMembersPic/Brijesh.jpeg"><div class="member-name">Brijesh Shah</div><div class="member-role">DevOps Engineer</div></div>
+        </div>
+</div>
+
+<div class="cta-banner">
+    <h2 class="fw-bold mb-3">Ready to solve your first query?</h2>
+    <p class="mb-4">Join hundreds of teams managing support requests efficiently.</p>
+    <a href="@Url.Action("Register", "User")" class="btn-sp shadow-lg">Create Free Account</a>
+</div> *@
+@{
+    ViewData["Title"] = "About Us | SolvePoint";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+<style>
+    :root {
+        --sp-primary: #4f46e5;
+        --sp-primary-hover: #4338ca;
+        --sp-secondary: #0ea5e9;
+        --sp-bg: #f8fafc;
+        --text-main: #1e293b;
+        --text-muted: #64748b;
+        --glass-bg: rgba(255, 255, 255, 0.85);
+    }
+
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: var(--sp-bg);
+        color: var(--text-main);
+        overflow-x: hidden;
+    }
+
+    /* --- HERO SECTION ANIMATIONS --- */
+    .about-hero {
+        background: linear-gradient(135deg, #251f91c8 0%, #7c3aeda6 40%, #135a7cb8 100%);
+        background-size: 200% 200%;
+        animation: gradientMove 8s ease infinite;
+        padding: 120px 24px;
+        text-align: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        
+        border-radius: 32px 32px 32px 4px;
+    }
+
+
+    @@keyframes gradientMove {
+        0% {
+            background-position: 0% 50%;
+        }
+
+        50% {
+            background-position: 100% 50%;
+        }
+
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        animation: fadeInUp 1s ease-out forwards;
+    }
+
+    @@keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .about-hero h1 {
+        font-weight: 800;
+        font-size: clamp(2.8rem, 6vw, 4.5rem);
+        letter-spacing: -0.04em;
+        margin-bottom: 24px;
+        line-height: 1.1;
+    }
+
+    .about-hero h1 span {
+        background: linear-gradient(to right, #fff, #e0e7ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Floating Abstract Shapes */
+    .shape {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        filter: blur(40px);
+        z-index: 1;
+        animation: float 10s infinite ease-in-out;
+    }
+
+    .shape-1 {
+        width: 300px;
+        height: 300px;
+        top: -100px;
+        left: -50px;
+    }
+
+    .shape-2 {
+        width: 200px;
+        height: 200px;
+        bottom: -50px;
+        right: -20px;
+        animation-delay: 2s;
+    }
+
+    @@keyframes float {
+
+        0%,
+        100% {
+            transform: translateY(0) scale(1);
+        }
+
+        50% {
+            transform: translateY(-20px) scale(1.1);
+        }
+    }
+
+    /* --- BUTTONS & BADGES --- */
+    .btn-sp-white {
+        background: white;
+        color: var(--sp-primary);
+        padding: 16px 36px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-sp-white:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        color: var(--sp-primary-hover);
+    }
+
+    /* --- SECTION LAYOUT --- */
+    .section {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 100px 24px;
+    }
+
+    .section-label {
+        color: var(--sp-primary);
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        font-size: 0.75rem;
+        margin-bottom: 12px;
+        display: block;
+    }
+
+    .section-title {
+        font-weight: 800;
+        font-size: 2.5rem;
+        letter-spacing: -0.02em;
+        margin-bottom: 30px;
+    }
+
+    /* --- TEAM GRID --- */
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 30px;
+        margin-top: 50px;
+    }
+
+    .team-card {
+        background: white;
+        border-radius: 28px;
+        padding: 35px 25px;
+        text-align: center;
+        border: 1px solid #f1f5f9;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .team-card:hover {
+        transform: translateY(-12px);
+        box-shadow: 0 25px 50px -12px rgba(79, 70, 229, 0.15);
+        border-color: var(--sp-primary);
+    }
+
+    .team-card img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+        padding: 5px;
+        border: 2px solid #eef2ff;
+        transition: 0.4s;
+    }
+
+    .team-card:hover img {
+        border-color: var(--sp-primary);
+        transform: rotate(5deg);
+    }
+
+    .member-name {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: var(--text-main);
+        margin-bottom: 4px;
+    }
+
+    .member-role {
+        color: var(--sp-primary);
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* --- FEATURES --- */
+    .feature-card {
+        background: white;
+        padding: 40px;
+        border-radius: 24px;
+        height: 100%;
+        border: 1px solid #e2e8f0;
+        transition: 0.3s;
+    }
+
+    .feature-card:hover {
+        border-color: var(--sp-primary);
+        background: #fcfdff;
+    }
+
+    .f-icon {
+        font-size: 2rem;
+        color: var(--sp-primary);
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    .bgmy{
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        border-radius: 30px;
+        
+    }
+</style>
+
+<div class="about-hero">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+
+    <div class="hero-content">
+        <span class="badge bg-white text-primary rounded-pill px-3 py-2 mb-4 fw-bold">THE TEAM BEHIND SOLVEPOINT</span>
+        <h1>Building the Future of<br /><span>Query Management</span></h1>
+        <p>We are a dedicated group of developers and designers committed to making<br />business communication seamless
+            and accountable.</p>
+        <div class="mt-5">
+            <a href="@Url.Action("Register", "User")" class="btn-sp-white">
+                <i class="bi bi-rocket-takeoff"></i> Join the Journey
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="row align-items-center g-5">
+        <div class="col-lg-6" data-aos="fade-right">
+            <span class="section-label">Our Architecture</span>
+            <h2 class="section-title">Built with Precision</h2>
+            <p class="text-muted lead">SolvePoint isn't just a tool; it's a robust ecosystem built on <b>ASP.NET Core
+                    8</b> and <b>Clean Repository Patterns</b>.</p>
+            <p class="text-muted">Designed for developers by developers, our platform ensures 100% query visibility with
+                a focus on high-performance real-time tracking.</p>
+        </div>
+        <div class="col-lg-6" data-aos="fade-left">
+            <div class="row g-3">
+                <div class="col-6">
+                    <div class="p-4 bg-white rounded-4 shadow-sm text-center">
+                        <h3 class="fw-bold text-primary mb-1">12+</h3>
+                        <small class="text-muted uppercase fw-bold">Experts</small>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="p-4 bg-white rounded-4 shadow-sm text-center">
+                        <h3 class="fw-bold text-primary mb-1">24/7</h3>
+                        <small class="text-muted uppercase fw-bold">Active Tracking</small>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div
+                        class="p-4 bg-white rounded-4 shadow-sm d-flex align-items-center gap-3 border-start border-primary border-4">
+                        <i class="bi bi-cpu text-primary h2 mb-0"></i>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Optimized Engine</h6>
+                            <small class="text-muted">Fast, Scalable, and Secure.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section" style="padding-top: 0;">
+    <span class="section-label" data-aos="fade-up">The Workforce</span>
+    <h2 class="section-title" data-aos="fade-up">Meet Our Team</h2>
+
+    <div class="team-grid">
+        @{
+            var members = new[] {
+                new { Name = "Ankit Chhuhhar", Role = "", Img = "Ankit_Sir.jpeg" },
+                new { Name = "Deep Pokiya", Role = "", Img = "Deep_Sir.jpeg" },
+                new { Name = "Meet Patel", Role = "", Img = "Meet_Sir.jpeg" },
+                new { Name = "Priyanshu Singh", Role = "", Img = "Priyanshu.jpeg" },
+                new { Name = "Nishi Shah", Role = " ", Img = "Nishi_Ma'am.jpeg" },
+                new { Name = "Disha Patel", Role = "", Img = "Disha.jpeg" },
+                new { Name = "Shruti Dabhi", Role = "", Img = "Shruti.jpeg" },
+                new { Name = "Vaidushi Oza", Role = "", Img = "Vaidushi.jpeg" },
+                new { Name = "Brijesh Shah", Role = "", Img = "Brijesh.jpeg" },
+                new { Name = "Bhavik Patel", Role = "", Img = "Bhavik.jpeg" },
+                new { Name = "Yuvraj Makwana", Role = "", Img = "Yuvraj1.webp" },
+                new { Name = "Vineet Pal", Role = "", Img = "Vineet.jpeg" }
+                };
+
+            foreach (var m in members)
+            {
+                <div class="team-card" data-aos="fade-up">
+                    <img src="~/TeamMembersPic/@m.Img" asp-append-version="true" alt="@m.Name">
+                    <div class="member-name">@m.Name</div>
+                    <div class="member-role">@m.Role</div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div class="container mb-5">
+    <div class="bgmy text-white p-5 rounded-5 text-center shadow-lg position-relative overflow-hidden">
+        <div class="position-relative z-2">
+            <h2 class="fw-bold mb-3">Ready to transform your support?</h2>
+            <p class="opacity-75 mb-4">Experience the SolvePoint difference today.</p>
+            <a href="@Url.Action("Register", "User")" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold">Sign Up
+                Free</a>
+        </div>
+        <div class="shape shape-1" style="opacity: 0.1"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        $(document).ready(function () {
+            AOS.init({
+                duration: 800,
+                once: true,
+                offset: 100
+            });
+        });
+    </script>
+}

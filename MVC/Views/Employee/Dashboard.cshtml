@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Employee Command Center";
+    ViewData["Title"] = "Employee Workspace";
     Layout = "_EmployeeLayout";
 }
 
@@ -111,6 +111,45 @@
 
             <div class="k-card p-3">
                 <h5 class="mb-4 fw-bold">Pending User Queries</h5>
+
+
+
+
+                <div class="row g-3 align-items-center mb-4 p-3 bg-light rounded-3 border">
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <label class="me-2 fw-bold text-secondary">From:</label>
+                            <div class="flex-grow-1">
+                                <input id="fromDate" class="w-100" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="d-flex align-items-center">
+                            <label class="me-2 fw-bold text-secondary">To:</label>
+                            <div class="flex-grow-1">
+                                <input id="toDate" class="w-100" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="d-flex gap-2">
+                            <button id="btnFilter" class="btn btn-primary d-flex align-items-center shadow-sm px-4">
+                                <i class="bi bi-filter-left me-2"></i> Filter
+                            </button>
+                            <button id="btnClear" class="btn btn-outline-secondary d-flex align-items-center px-4">
+                                <i class="bi bi-arrow-clockwise me-2"></i> Clear
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
                 <div id="unsolvedGrid"></div>
             </div>
         </div>
@@ -176,6 +215,35 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+
+            // 🔽 Date Pickers
+            $("#fromDate").kendoDatePicker();
+            $("#toDate").kendoDatePicker();
+
+
+
+            $("#btnFilter").click(function () {
+
+                var fromDate = $("#fromDate").data("kendoDatePicker").value();
+                var toDate = $("#toDate").data("kendoDatePicker").value();
+
+                var grid = $("#unsolvedGrid").data("kendoGrid");
+
+                grid.dataSource.transport.options.read.url =
+                    `/Employee/Filter?fromDate=${kendo.toString(fromDate, "yyyy-MM-dd")}&toDate=${kendo.toString(toDate, "yyyy-MM-dd")}`;
+
+                grid.dataSource.read();
+            });
+
+            $("#btnClear").click(function () {
+
+                var grid = $("#unsolvedGrid").data("kendoGrid");
+
+                grid.dataSource.transport.options.read.url =
+                    "@Url.Action("GetUnsolvedQueries", "Employee")";
+
+                grid.dataSource.read();
+            });
             // Initialize Core UI
             $("#mainTabStrip").kendoTabStrip({ animation: { open: { effects: "fadeIn" } } });
 
@@ -292,7 +360,4 @@
             return `<span class="badge-priority bg-${color}20 text-${color} border border-${color}">${p}</span>`;
         }
     </script>
-} 
-
-
-
+}

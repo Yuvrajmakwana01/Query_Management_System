@@ -9,8 +9,9 @@ using Repository.Interfaces;
 
 namespace Repository.Implementations
 {
-    public class UserRepository:IUserInterface
+    public class UserRepository : IUserInterface
     {
+        
         private readonly NpgsqlConnection _conn;
         public UserRepository(NpgsqlConnection connection)
         {
@@ -59,7 +60,7 @@ namespace Repository.Implementations
         //         return false;
         //     }
         // }
-        public bool Register(t_Registration user)
+        public async Task<bool> Register(t_Registration user)
         {
             try
             {
@@ -84,7 +85,7 @@ namespace Repository.Implementations
                 {
                     // Ensure you are using the exact property names from your t_Registration model
                     cmd.Parameters.AddWithValue("@company", user.c_CompanyName);
-                    cmd.Parameters.AddWithValue("@empname", user.c_EmpName); 
+                    cmd.Parameters.AddWithValue("@empname", user.c_EmpName);
                     cmd.Parameters.AddWithValue("@email", user.c_EmailId);
                     cmd.Parameters.AddWithValue("@password", user.c_Password);
 
@@ -103,6 +104,7 @@ namespace Repository.Implementations
             catch (Exception ex)
             {
                 // Check ex.Message here; it will tell you if there is a 'Column not found' or 'Null constraint' error
+                Console.WriteLine(ex.Message);
                 if (_conn.State == ConnectionState.Open) _conn.Close();
                 return false;
             }

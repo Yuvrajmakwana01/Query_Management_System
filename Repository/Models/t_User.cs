@@ -22,13 +22,13 @@ namespace Repository.Models
         [StringLength(40)]
         public string? c_CompanyName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Please enter your email address")]
         [EmailAddress]
         [StringLength(50)]
         public string? c_EmailId { get; set; }
 
-        [Required]
-        [StringLength(30, MinimumLength = 6)]
+        [Required(ErrorMessage = "Please enter your password")]
+        [StringLength(30, MinimumLength = 8)]
         public string? c_Password { get; set; }
     }
 }

@@ -15,5 +15,9 @@ namespace Repository.Interfaces
 
         // Login check for Employees/Admins
         Task<t_Employee?> LoginEmployee(string email, string password);
+
+        Task<string?> CheckEmailExists(string email);
+
+        Task<bool> ResetPassword(string email, string newPassword, string userType);
     }
 }
