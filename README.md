@@ -9,14 +9,14 @@ It provides a structured workflow for Users, Employees, and Admins to handle iss
 
 🚀 Features
 
-👤 User Management
+👤 User Management :
 
 User Registration: Register with company name, email, and password
 Secure Login: Authentication-based access
 Role-Based Access Control: Admin, Employee, User
 
 
-📝 Query Management
+📝 Query Management :
 
 Create Queries with:
 Title
@@ -32,7 +32,9 @@ User Capabilities:
 Edit or delete queries (only if unsolved)
 Track submitted queries
 
-📊 Dashboard (Admin & Employee)
+
+📊 Dashboard (Admin & Employee) :
+
 Query Statistics:
 Total queries (All & Today)
 Solved queries (All & Today)
@@ -42,25 +44,25 @@ Employee Performance Tracking:
 Number of queries resolved per employee
 
 
-👥 Roles & Responsibilities
+👥 Roles & Responsibilities :
 
-🔑 Admin
+🔑 Admin :
 Manage users and queries
 View complete dashboard and analytics
 
-👨‍💻 Employee
+👨‍💻 Employee :
 View assigned/unsolved queries
 Update query status (Open → In Progress → Solved)
 Add comments/resolutions
 Track personal performance
 
-🙋 User
+🙋 User :
 Submit queries
 Edit/Delete queries (if not solved)
 Track query status
 
 
-🛠️ Tech Stack
+🛠️ Tech Stack :
 
 🔹 Backend
 ASP.NET Core MVC
@@ -77,7 +79,7 @@ RabbitMQ (Message Queue)
 ELK Stack (Elasticsearch, Logstash, Kibana)
 
 
-🏗️ Project Structure
+🏗️ Project Structure :
 MVC/
 │
 ├── Controllers/
@@ -88,14 +90,14 @@ MVC/
 │   └── Implementations/
 
 
-🔐 Authentication & Security
+🔐 Authentication & Security :
 
 JWT-based authentication
 Role-based authorization
 Secure API communication
 
 
-⚡ Key Highlights
+⚡ Key Highlights :
 
 Scalable architecture using MVC pattern
 Real-time query tracking and workflow
@@ -104,7 +106,7 @@ Asynchronous communication using RabbitMQ
 Logging and monitoring using ELK Stack
 
 
-📌 Future Enhancements
+📌 Future Enhancements :
 
 Email notifications for query updates
 Real-time dashboard using WebSockets
