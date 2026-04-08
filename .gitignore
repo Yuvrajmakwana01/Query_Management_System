@@ -27,3 +27,6 @@ packages/
 # OS files
 .DS_Store
 Thumbs.db
+
+appsettings.Development.json
+appsettings.json
